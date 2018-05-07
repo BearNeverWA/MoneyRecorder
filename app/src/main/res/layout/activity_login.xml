@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical"
+    tools:context="com.meiyin.moneyrecorder.activities.LoginActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp"
+        android:text="简单记"
+        android:textColor="#FFA632"
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/activity_main_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/shape_edittext_border"
+        android:gravity="center"
+        android:hint="@string/hint_user_name"
+        android:maxLines="1"
+        android:textSize="@dimen/small_size" />
+
+    <EditText
+        android:inputType="textPassword"
+        android:id="@+id/activity_main_pwd"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/shape_edittext_border"
+        android:gravity="center"
+        android:hint="@string/hint_pwd"
+        android:maxLines="1"
+        android:textSize="@dimen/small_size" />
+
+    <Button
+        android:id="@+id/activity_main_login"
+        style="?android:borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/shape_button_border_yellow"
+        android:text="@string/login"
+        android:textColor="#fff"
+        android:textSize="@dimen/normal_size" />
+
+    <Button
+        android:id="@+id/activity_main_reset"
+        style="?android:borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/shape_button_border_yellow"
+        android:text="@string/reset"
+        android:textColor="#fff"
+        android:textSize="@dimen/normal_size" />
+
+</LinearLayout>

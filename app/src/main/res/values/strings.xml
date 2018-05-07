@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">MoneyRecorder</string>
+    <string name="user_name">账号:</string>
+    <string name="hint_user_name">请输入账号</string>
+    <string name="pwd">密码</string>
+    <string name="hint_pwd">请输入密码</string>
+    <string name="login">登录</string>
+    <string name="reset">重置</string>
+    <string name="register">注册</string>
+
+
+    <string name="make_a_note">记一笔</string>
+    <string name="personal_center">个人中心</string>
+    <string name="analyse">本月分析</string>
+</resources>
