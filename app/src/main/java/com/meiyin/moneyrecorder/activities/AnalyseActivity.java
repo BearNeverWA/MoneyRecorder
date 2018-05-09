@@ -7,7 +7,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +35,7 @@ import lecho.lib.hellocharts.view.PieChartView;
  */
 
 public class AnalyseActivity extends Activity {
+    private final String TAG = "AnalyseActivity";
     List<Map<String, Object>> listItems;
     //定义总饼图的Map数据
     Map<String, Double> analysedMap;
@@ -45,8 +49,16 @@ public class AnalyseActivity extends Activity {
     private PieChartData payChartData;
     //定义收入饼图的数据
     Map<String, Double> analysedIncomeMap;
+    private LinearLayout pay_ll;
+    private LinearLayout income_ll;
+    private LinearLayout all_ll;
+    private LinearLayout pay_list_ll;
+    private LinearLayout income_list_ll;
+    private LinearLayout all_list_ll;
     private PieChartView incomeChart;
     private PieChartData incomeChartData;
+    private Spinner type_selector;
+    private static final String[] typeSpinner = {"支出", "收入", "总计"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +68,13 @@ public class AnalyseActivity extends Activity {
         chart = (PieChartView)findViewById(R.id.pie_chart);
         payChart = (PieChartView)findViewById(R.id.pie_chart_pay);
         incomeChart = (PieChartView)findViewById(R.id.pie_chart_income);
+        type_selector = (Spinner)findViewById(R.id.analyse_type_selector);
+        pay_ll = (LinearLayout)findViewById(R.id.pay_ll);
+        income_ll = (LinearLayout)findViewById(R.id.income_ll);
+        all_ll = (LinearLayout)findViewById(R.id.all_ll);
+        pay_list_ll = (LinearLayout)findViewById(R.id.pay_list_ll);
+        income_list_ll = (LinearLayout)findViewById(R.id.income_list_ll);
+        all_list_ll = (LinearLayout)findViewById(R.id.all_list_ll);
 
         initData();
         initUI();
@@ -119,6 +138,9 @@ public class AnalyseActivity extends Activity {
             SliceValue sValue = new SliceValue(number, ChartUtils.pickColor());
             sValue.setLabel(key + ":" + number);
             values.add(sValue);
+            TextView tmp_tv = new TextView(this);
+            tmp_tv.setText(key + ":  " + number);
+            all_list_ll.addView(tmp_tv);
         }
         chartData = new PieChartData(values);
         chartData.setHasLabels(true);
@@ -140,6 +162,9 @@ public class AnalyseActivity extends Activity {
             SliceValue sValue = new SliceValue(number, ChartUtils.pickColor());
             sValue.setLabel(key + ":" + number);
             values_pay.add(sValue);
+            TextView tmp_tv = new TextView(this);
+            tmp_tv.setText(key + ":  " + number);
+            pay_list_ll.addView(tmp_tv);
         }
         payChartData = new PieChartData(values_pay);
         payChartData.setHasLabels(true);
@@ -161,6 +186,9 @@ public class AnalyseActivity extends Activity {
             SliceValue sValue = new SliceValue(number, ChartUtils.pickColor());
             sValue.setLabel(key + ":" + number);
             values_income.add(sValue);
+            TextView tmp_tv = new TextView(this);
+            tmp_tv.setText(key + ":  " + number);
+            income_list_ll.addView(tmp_tv);
         }
         incomeChartData = new PieChartData(values_income);
         incomeChartData.setHasLabels(true);
@@ -173,11 +201,36 @@ public class AnalyseActivity extends Activity {
     private void initUI() {
         String title = getIntent().getExtras().getString("title");
         ((TextView)findViewById(R.id.analyse_title)).setText(title + "分析");
+        ArrayAdapter typeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, typeSpinner);
+        type_selector.setAdapter(typeAdapter);
         chart.setPieChartData(chartData);
         payChart.setPieChartData(payChartData);
         incomeChart.setPieChartData(incomeChartData);
     }
 
     private void bindEvents() {
+        type_selector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i == 0) {   //支出
+                    pay_ll.setVisibility(View.VISIBLE);
+                    income_ll.setVisibility(View.GONE);
+                    all_ll.setVisibility(View.GONE);
+                } else if (i == 1) { //收入
+                    pay_ll.setVisibility(View.GONE);
+                    income_ll.setVisibility(View.VISIBLE);
+                    all_ll.setVisibility(View.GONE);
+                } else if (i == 2) {    //总计
+                    pay_ll.setVisibility(View.GONE);
+                    income_ll.setVisibility(View.GONE);
+                    all_ll.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 }
