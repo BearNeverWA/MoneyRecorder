@@ -60,6 +60,7 @@
             android:layout_marginRight="20dp"
             android:text="@string/make_a_note"/>
         <Button
+            android:id="@+id/activity_percenal_center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/personal_center"/>

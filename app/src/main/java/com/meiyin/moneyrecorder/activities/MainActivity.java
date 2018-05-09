@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,6 +30,7 @@ import java.util.Map;
  */
 
 public class MainActivity extends Activity {
+    public static Activity mActivity;
     ArrayList<RecordItems> dataFromDb;
     SimpleAdapter adapter;
     List<String> monthsList;
@@ -45,6 +47,7 @@ public class MainActivity extends Activity {
         initData();
         initUI();
         bindEvents();
+        mActivity = this;
     }
 
     @Override
@@ -185,6 +188,13 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AnalyseActivity.class);
                 intent.putExtra("title", currentMonth);
+                startActivity(intent);
+            }
+        });
+        findViewById(R.id.activity_percenal_center).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, PersonalCenterActivity.class);
                 startActivity(intent);
             }
         });
