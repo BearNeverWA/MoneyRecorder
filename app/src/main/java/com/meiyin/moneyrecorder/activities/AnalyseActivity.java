@@ -1,27 +1,18 @@
 package com.meiyin.moneyrecorder.activities;
 
-import android.app.Activity;
-import android.app.FragmentTransaction;
-import android.app.LauncherActivity;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.meiyin.moneyrecorder.Fragments.IncomeFragment;
-import com.meiyin.moneyrecorder.Fragments.PayFragment;
+import com.meiyin.moneyrecorder.BaseActivity;
 import com.meiyin.moneyrecorder.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.SliceValue;
 import lecho.lib.hellocharts.util.ChartUtils;
@@ -31,7 +22,7 @@ import lecho.lib.hellocharts.view.PieChartView;
  * Created by cootek332 on 18/4/1.
  */
 
-public class AnalyseActivity extends Activity {
+public class AnalyseActivity extends BaseActivity {
     List<Map<String, Object>> listItems;
     //定义总饼图的Map数据
     Map<String, Double> analysedMap;

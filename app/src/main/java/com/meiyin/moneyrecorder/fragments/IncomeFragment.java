@@ -1,4 +1,4 @@
-package com.meiyin.moneyrecorder.Fragments;
+package com.meiyin.moneyrecorder.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.Fragment;
@@ -25,9 +25,9 @@ import java.util.Calendar;
  * Created by cootek332 on 18/4/1.
  */
 
-public class PayFragment extends Fragment {
+public class IncomeFragment extends Fragment {
     private static final String[] classifySpinner = {"购物", "零食", "交通", "住房", "餐饮", "娱乐", "社交", "话费", "借出", "其它"};
-    private static final String[] payClassifySpinner = {"支付宝", "微信", "招商银行", "交通银行"};
+    private static final String[] incomeClassifySpinner = {"支付宝", "微信", "招商银行", "交通银行"};
     View view;
     TextView dateView;
 
@@ -38,7 +38,7 @@ public class PayFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_pay, container, false);
+        view = inflater.inflate(R.layout.fragment_income, container, false);
         initDate();
         initUI();
         bindEvents();
@@ -53,16 +53,16 @@ public class PayFragment extends Fragment {
     }
 
     private void initUI() {
-        dateView = (TextView) view.findViewById(R.id.pay_date_picker);
+        dateView = (TextView) view.findViewById(R.id.income_date_picker);
 
         ArrayAdapter classifyAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, classifySpinner);
-        ArrayAdapter payClassifyAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, payClassifySpinner);
+        ArrayAdapter incomeClassifyAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, incomeClassifySpinner);
 
-        Spinner classifySpinner = (Spinner)view.findViewById(R.id.classify_spinner);
-        Spinner payClassifySpinner = (Spinner)view.findViewById(R.id.pay_classify_spinner);
+        Spinner classifySpinner = (Spinner)view.findViewById(R.id.income_classify_spinner);
+        Spinner incomeClassifySpinner = (Spinner)view.findViewById(R.id.income_dest_spinner);
 
         classifySpinner.setAdapter(classifyAdapter);
-        payClassifySpinner.setAdapter(payClassifyAdapter);
+        incomeClassifySpinner.setAdapter(incomeClassifyAdapter);
     }
 
     private void bindEvents() {
@@ -72,14 +72,14 @@ public class PayFragment extends Fragment {
                 new DatePickerDialog(getActivity(), onDateSetListener, mYear, mMonth, mDay).show();
             }
         });
-        view.findViewById(R.id.pay_save).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.income_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Spinner buyClassifyOne = (Spinner)view.findViewById(R.id.classify_spinner);
-                Spinner payClassify = (Spinner)view.findViewById(R.id.pay_classify_spinner);
+                Spinner incomeClassifyOne = (Spinner)view.findViewById(R.id.income_classify_spinner);
+                Spinner incomeDestClassify = (Spinner)view.findViewById(R.id.income_dest_spinner);
 
-                EditText moneyET = (EditText)view.findViewById(R.id.pay_money);
-                TextView dateTV = (TextView)view.findViewById(R.id.pay_date_picker);
+                EditText moneyET = (EditText)view.findViewById(R.id.income_money);
+                TextView dateTV = (TextView)view.findViewById(R.id.income_date_picker);
                 if (TextUtils.isEmpty(moneyET.getText().toString())) {
                     Toast.makeText(getActivity(), "请输入金额", Toast.LENGTH_SHORT).show();
                     return;
@@ -88,9 +88,9 @@ public class PayFragment extends Fragment {
                     Toast.makeText(getActivity(), "请选择日期", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                SQLiteUtils.insertRecord(new RecordItems(null, buyClassifyOne.getSelectedItem().toString(),
-                        payClassify.getSelectedItem().toString(),
-                        Double.parseDouble("-" + moneyET.getText().toString()),
+                SQLiteUtils.insertRecord(new RecordItems(null, incomeClassifyOne.getSelectedItem().toString(),
+                        incomeDestClassify.getSelectedItem().toString(),
+                        Double.parseDouble(moneyET.getText().toString()),
                         dateTV.getText().toString(),
                         Calendar.getInstance().getTimeInMillis(), 0));
                 Toast.makeText(getActivity(), "数据保存成功", Toast.LENGTH_SHORT).show();

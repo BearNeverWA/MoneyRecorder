@@ -16,13 +16,14 @@ import java.util.HashMap;
  */
 
 public class SQLiteUtils {
+
     private static SQLiteDatabase recordDb;
     private static final String RECORD_TABLE_NAME = "record_table";
     private static String TAG = "SQLiteUtils";
 
     //初始化数据库
     public static void init() {
-        //存储目录,在当前app对应目录下的/databasea/recorder.db
+        //存储目录,在当前app对应目录下的/databases/recorder.db
         File db_dir = new File("/data/data/com.meiyin.moneyrecorder/databases");
         //创建文件夹
         if (!db_dir.exists()) {
@@ -57,7 +58,8 @@ public class SQLiteUtils {
         recordDb.execSQL(table_sql);
     }
 
-    public static void insertRecord(RecordItems record) {//(String buyClassifyOne,String payClassify,  Double money, String time, long currentTime, int deleted) {
+    public static void insertRecord(RecordItems record) {
+        //(String buyClassifyOne,String payClassify,  Double money, String time, long currentTime, int deleted) {
         if (recordDb == null) {
             Log.e(TAG, "insertRecord db is null");
             return;
@@ -76,7 +78,7 @@ public class SQLiteUtils {
     public static void delete(String id) {
         ContentValues cValues = new ContentValues();
         cValues.put("iDeleted", 1);
-        recordDb.update(RECORD_TABLE_NAME, cValues, "_id = ?", new String[] {id});
+        recordDb.update(RECORD_TABLE_NAME, cValues, "_id = ?", new String[]{id});
     }
 
     public static ArrayList<RecordItems> getRecords() {
@@ -85,13 +87,13 @@ public class SQLiteUtils {
         Cursor cursor = recordDb.query(RECORD_TABLE_NAME, null, null, null, null, null, null);
         dbData = cursorToArrList(cursor);
         for (int i = 0; i < dbData.size(); i++) {
-            String id = (String)dbData.get(i).get("_id");
-            String buyClassifyOne = (String)dbData.get(i).get("sBuyClassifyOne");
-            String payClassify = (String)dbData.get(i).get("sPayClassify");
-            double money = Double.parseDouble((String)dbData.get(i).get("rMoney"));
-            String time = (String)dbData.get(i).get("sTime");
-            long currentTime = Long.parseLong((String)dbData.get(i).get("iCurrentTime"));
-            int deleted = Integer.parseInt((String)dbData.get(i).get("iDeleted"));
+            String id = (String) dbData.get(i).get("_id");
+            String buyClassifyOne = (String) dbData.get(i).get("sBuyClassifyOne");
+            String payClassify = (String) dbData.get(i).get("sPayClassify");
+            double money = Double.parseDouble((String) dbData.get(i).get("rMoney"));
+            String time = (String) dbData.get(i).get("sTime");
+            long currentTime = Long.parseLong((String) dbData.get(i).get("iCurrentTime"));
+            int deleted = Integer.parseInt((String) dbData.get(i).get("iDeleted"));
             if (deleted != 1) {
                 records.add(new RecordItems(id, buyClassifyOne, payClassify, money, time, currentTime, deleted));
             }
@@ -104,7 +106,7 @@ public class SQLiteUtils {
         if (tableName == null)
             return false;
         Cursor cursor = null;
-        String sql = "select * from sqlite_master where type ='table' and name ='" + tableName + "'" ;
+        String sql = "select * from sqlite_master where type ='table' and name ='" + tableName + "'";
         cursor = db.rawQuery(sql, null);
         if (cursor.moveToNext()) {
             int count = cursor.getInt(0);
@@ -116,13 +118,13 @@ public class SQLiteUtils {
         return result;
     }
 
-    private static ArrayList<HashMap<String,Object>> cursorToArrList(Cursor cursor){
-        ArrayList<HashMap<String,Object>> list = new ArrayList<>();
-        HashMap<String,Object> map;
-        while (cursor.moveToNext()){
+    private static ArrayList<HashMap<String, Object>> cursorToArrList(Cursor cursor) {
+        ArrayList<HashMap<String, Object>> list = new ArrayList<>();
+        HashMap<String, Object> map;
+        while (cursor.moveToNext()) {
             map = new HashMap<>();
             for (int i = 0; i < cursor.getColumnCount(); i++) {
-                map.put(cursor.getColumnName(i),cursor.getString(cursor.getColumnIndexOrThrow(cursor.getColumnName(i))));
+                map.put(cursor.getColumnName(i), cursor.getString(cursor.getColumnIndexOrThrow(cursor.getColumnName(i))));
             }
             list.add(map);
         }
