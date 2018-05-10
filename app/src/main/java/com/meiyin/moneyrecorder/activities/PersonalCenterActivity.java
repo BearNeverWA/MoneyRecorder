@@ -14,9 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.meiyin.moneyrecorder.R;
+import com.meiyin.moneyrecorder.entities.CreditItems;
 import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.SharePreferenceKeys;
 import com.meiyin.moneyrecorder.utils.SharePreferenceUtil;
+
+import java.util.ArrayList;
 
 /**
  * Created by cootek332 on 18/5/9.
@@ -52,6 +55,7 @@ public class PersonalCenterActivity extends Activity {
         pay_day_et = (EditText)findViewById(R.id.pay_day);
         initUI();
         bindEvents();
+        fetchAndShowCredit();
     }
     private void initUI() {
         account_tv.setText(SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_USER_NAME));
@@ -113,7 +117,7 @@ public class PersonalCenterActivity extends Activity {
                     Toast.makeText(PersonalCenterActivity.this, "请填入还款日", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                recordCredit();
+                recordCredit(bank, card_number, Integer.parseInt(bill_day), Integer.parseInt(pay_day));
                 fetchAndShowCredit();
                 clearTable();
             }
@@ -135,16 +139,21 @@ public class PersonalCenterActivity extends Activity {
 
     }
 
-    private void recordCredit() {
-        //TODO
+    private void recordCredit(String bank, String card_number, int bill_day, int pay_day) {
+        CreditItems item = new CreditItems(null, bank, card_number, bill_day, pay_day, 0, 0);
+        SQLiteUtils.insertCredit(item);
     }
 
     private void fetchAndShowCredit() {
-        //TODO
-        TextView tmp_tv = new TextView(PersonalCenterActivity.this);
-        tmp_tv.setText("test");
-//        tmp_tv.setText(bank + ":" + card_number + ", 出账日: 每月" + bill_day + "日, 最后还款日: 每月" + pay_day + "日" );
-        credit_ll.addView(tmp_tv);
+        credit_ll.removeAllViews();
+        ArrayList<CreditItems> items = SQLiteUtils.getCredits();
+        for (int i = 0; i < items.size(); i++) {
+            CreditItems item = items.get(i);
+            TextView tmp_tv = new TextView(PersonalCenterActivity.this);
+            tmp_tv.setText(item.getBankName() + ": " + item.getCardNumber() + ", 出账日期: " + item.getBillDay() + ", 还款日期: " + item.getPayDay());
+            tmp_tv.setTextSize(20);
+            credit_ll.addView(tmp_tv);
+        }
     }
 
     private void clearTable() {
