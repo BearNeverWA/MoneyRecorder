@@ -101,6 +101,8 @@ public class PersonalCenterActivity extends Activity {
                 String card_number = card_number_et.getText().toString();
                 String bill_day = bill_day_et.getText().toString();
                 String pay_day = pay_day_et.getText().toString();
+                int bill_day_int = 0;
+                int pay_day_int = 0;
                 if (TextUtils.isEmpty(bank)) {
                     Toast.makeText(PersonalCenterActivity.this, "请填入银行名", Toast.LENGTH_SHORT).show();
                     return;
@@ -115,6 +117,30 @@ public class PersonalCenterActivity extends Activity {
                 }
                 if (TextUtils.isEmpty(pay_day)) {
                     Toast.makeText(PersonalCenterActivity.this, "请填入还款日", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                try {
+                    bill_day_int = Integer.parseInt(bill_day);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(PersonalCenterActivity.this, "出账日格式错误,请填入1-28之间的数字", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (bill_day_int > 28 || bill_day_int < 1 ) {
+                    Toast.makeText(PersonalCenterActivity.this, "出账日格式错误,请填入1-28之间的数字", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                try {
+                    pay_day_int = Integer.parseInt(pay_day);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(PersonalCenterActivity.this, "还款日格式错误,请填入1-28之间的数字", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (pay_day_int > 28 || pay_day_int < 1 ) {
+                    Toast.makeText(PersonalCenterActivity.this, "还款日格式错误,请填入1-28之间的数字", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 recordCredit(bank, card_number, Integer.parseInt(bill_day), Integer.parseInt(pay_day));
