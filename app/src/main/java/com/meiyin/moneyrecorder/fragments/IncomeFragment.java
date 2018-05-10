@@ -27,6 +27,7 @@ import com.meiyin.moneyrecorder.entities.RecordItems;
 import com.meiyin.moneyrecorder.entities.RvItem;
 import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.CommonUtil;
+import com.meiyin.moneyrecorder.utils.DateUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -74,11 +75,11 @@ public class IncomeFragment extends Fragment {
     }
 
     private void initUI() {
-        tvSelected = (TextView) view.findViewById(R.id.tv_selected_income);
-        ivSelected = (ImageView) view.findViewById(R.id.iv_selected_income);
-        dateView = (TextView) view.findViewById(R.id.income_date_picker);
-        dateView.setText(mYear + "年" + (mMonth + 1) + "月" + mDay + "日");
-        recyclerView = (RecyclerView) view.findViewById(R.id.rv_classify_income);
+        tvSelected = view.findViewById(R.id.tv_selected_income);
+        ivSelected = view.findViewById(R.id.iv_selected_income);
+        dateView = view.findViewById(R.id.income_date_picker);
+        dateView.setText(mYear + "年" + DateUtil.dateDeal(mMonth + 1) + "月" + DateUtil.dateDeal(mDay) + "日");
+        recyclerView = view.findViewById(R.id.rv_classify_income);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 5);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new ClassAdapter(rvItemList);
@@ -91,7 +92,7 @@ public class IncomeFragment extends Fragment {
         });
         recyclerView.setAdapter(adapter);
 
-        incomeClass = (TextView) view.findViewById(R.id.income_classify_select);
+        incomeClass = view.findViewById(R.id.income_classify_select);
         incomeClass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -179,26 +180,7 @@ public class IncomeFragment extends Fragment {
             mYear = year;
             mMonth = monthOfYear;
             mDay = dayOfMonth;
-            String days;
-            if (mMonth + 1 < 10) {
-                if (mDay < 10) {
-                    days = new StringBuffer().append(mYear).append("年").append("0").
-                            append(mMonth + 1).append("月").append("0").append(mDay).append("日").toString();
-                } else {
-                    days = new StringBuffer().append(mYear).append("年").append("0").
-                            append(mMonth + 1).append("月").append(mDay).append("日").toString();
-                }
-
-            } else {
-                if (mDay < 10) {
-                    days = new StringBuffer().append(mYear).append("年").
-                            append(mMonth + 1).append("月").append("0").append(mDay).append("日").toString();
-                } else {
-                    days = new StringBuffer().append(mYear).append("年").
-                            append(mMonth + 1).append("月").append(mDay).append("日").toString();
-                }
-
-            }
+            String days = mYear + "年" + DateUtil.dateDeal(mMonth + 1) + "月" + DateUtil.dateDeal(mDay) + "日";
             dateView.setText(days);
         }
     };

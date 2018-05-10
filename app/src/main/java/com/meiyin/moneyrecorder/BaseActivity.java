@@ -41,8 +41,4 @@ public abstract class BaseActivity extends AppCompatActivity {
         textRight.setText(right);
     }
 
-    public void setTitleBackground(int color) {
-        layout.setBackgroundColor(ContextCompat.getColor(getBaseContext(), color));
-    }
-
 }

@@ -30,4 +30,17 @@ public class DateUtil {
         Date date = new Date(System.currentTimeMillis());
         return format.format(date);
     }
+
+    public static String getCurrentYearMonth() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
+        Date date = new Date(System.currentTimeMillis());
+        return format.format(date);
+    }
+
+    public static String dateDeal(int number) {
+        if (number < 10)
+            return "0" + number;
+        else
+            return String.valueOf(number);
+    }
 }

@@ -1,6 +1,7 @@
 package com.meiyin.moneyrecorder.activities;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -8,8 +9,11 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -24,6 +28,7 @@ import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.DateUtil;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -37,17 +42,16 @@ import java.util.Map;
 public class MainActivity extends BaseActivity {
 
     ArrayList<RecordItems> dataFromDb;
-    //    SimpleAdapter adapter;
     ListAdapter adapter;
-    List<String> monthsList;
-    Map<Integer, String> monthsMap;
     static List<Map<String, Object>> listItems;
     List<Map<String, Object>> reverseList;
-    String currentMonth = "";
 
     private TextView tvYear, tvMonth, tvIncome, tvPay, tvStatus, tvNumber;
 
     private double inMoney, outMoney, totalMoney;
+
+    private String selectMonth = "";
+    private int mYear, mMonth, mDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,40 +71,9 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initData() {
-        getLocalData();
-        getMonths();
+        getLocalData(selectMonth);
         initItems();
         getTotalMoney();
-    }
-
-    private void getMonths() {
-        if (monthsMap == null) {
-            monthsMap = new HashMap<>();
-        }
-        if (monthsList == null) {
-            monthsList = new ArrayList<>();
-        }
-        monthsMap.clear();
-        monthsList.clear();
-        for (int i = 0; i < dataFromDb.size(); i++) {
-            String month = dataFromDb.get(i).getSetTime().split("月")[0];
-            monthsMap.put(i, month);
-            if (!monthsList.contains(month)) {
-                monthsList.add(month);
-            }
-        }
-        Collections.sort(monthsList, new Comparator<String>() {
-            @Override
-            public int compare(String s, String t1) {
-                int sYear = Integer.parseInt(s.split("年")[0]);
-                int sMonth = Integer.parseInt(s.split("年")[1].split("月")[0]);
-                int t1Year = Integer.parseInt(t1.split("年")[0]);
-                int t1Month = Integer.parseInt(t1.split("年")[1].split("月")[0]);
-                int yearCompare = t1Year - sYear;
-                int monthCompare = t1Month - sMonth;
-                return yearCompare == 0 ? monthCompare : yearCompare;
-            }
-        });
     }
 
     @Override
@@ -113,17 +86,11 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initItems() {
-        if ("".equals(currentMonth) && monthsList != null && monthsList.size() > 0) {
-            currentMonth = monthsList.get(0) + "月";
-        }
         if (listItems == null) {
             listItems = new ArrayList<>();
         }
         listItems.clear();
         for (int i = 0; i < dataFromDb.size(); i++) {
-            if (!currentMonth.equals(dataFromDb.get(i).getSetTime().split("月")[0] + "月")) {
-                continue;
-            }
             Map<String, Object> listItem = new HashMap<>();
             listItem.put("_id", dataFromDb.get(i).getId());
             listItem.put("buyClassifyOne", dataFromDb.get(i).getBuyClassifyOne());
@@ -137,11 +104,6 @@ public class MainActivity extends BaseActivity {
             listItem.put("completeTime", dataFromDb.get(i).getSetTime());
             listItems.add(listItem);
         }
-//        adapter = new SimpleAdapter(this, listItems,
-//                R.layout.item_list,
-//                new String[]{"buyClassifyOne", "payClassify", "money", "setTime"},
-//                new int[]{R.id.item_buyDataClassifyOne, R.id.item_payClassify, R.id.item_money, R.id.item_time});
-
         reverseList = new ArrayList<>();
         for (int i = listItems.size() - 1; i >= 0; i--) {
             reverseList.add(listItems.get(i));
@@ -151,13 +113,12 @@ public class MainActivity extends BaseActivity {
 
     private void initUI() {
         setTitleRight("简单记", "选择月份");
-        setTitleBackground(R.color.colorMain);
-        tvYear = (TextView) findViewById(R.id.tv_year);
-        tvMonth = (TextView) findViewById(R.id.tv_month);
-        tvIncome = (TextView) findViewById(R.id.tv_income);
-        tvPay = (TextView) findViewById(R.id.tv_pay);
-        tvStatus = (TextView) findViewById(R.id.tv_status);
-        tvNumber = (TextView) findViewById(R.id.tv_number);
+        tvYear = findViewById(R.id.tv_year);
+        tvMonth = findViewById(R.id.tv_month);
+        tvIncome = findViewById(R.id.tv_income);
+        tvPay = findViewById(R.id.tv_pay);
+        tvStatus = findViewById(R.id.tv_status);
+        tvNumber = findViewById(R.id.tv_number);
 
         //下划线处理
         tvIncome.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
@@ -165,9 +126,8 @@ public class MainActivity extends BaseActivity {
         tvNumber.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
 
         //数据设置
-        String[] time = DateUtil.getCurrentTime().split("-");
-        tvYear.setText(time[0]);
-        tvMonth.setText(time[1]);
+        tvYear.setText(selectMonth.split("年")[0]);
+        tvMonth.setText(selectMonth.split("年")[1].split("月")[0]);
         tvIncome.setText("收  ￥" + String.valueOf(inMoney));
         tvPay.setText("支  ￥" + String.valueOf(outMoney));
         String total = String.valueOf(totalMoney);
@@ -182,7 +142,7 @@ public class MainActivity extends BaseActivity {
             tvNumber.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.red_ff6347));
         }
 
-        ListView content_list = (ListView) findViewById(R.id.content_list);
+        ListView content_list = findViewById(R.id.content_list);
         content_list.setAdapter(adapter);
         content_list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -196,11 +156,6 @@ public class MainActivity extends BaseActivity {
                                 SQLiteUtils.delete((String) listItems.get(listItems.size() - itemIndex - 1).get("_id"));
                                 listItems.remove(listItems.size() - itemIndex - 1);
                                 adapter.notifyDataSetChanged();
-                                if (listItems.size() == 0) {
-                                    currentMonth = "";
-                                }
-                                initData();
-                                initUI();
                             }
                         })
                         .setNegativeButton("取消", null)
@@ -222,20 +177,50 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AnalyseActivity.class);
-                intent.putExtra("title", currentMonth);
+                intent.putExtra("current", selectMonth);
                 startActivity(intent);
             }
         });
         findViewById(R.id.title_right).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "Wait for new", Toast.LENGTH_SHORT).show();
+                DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, DatePickerDialog.THEME_HOLO_LIGHT, dateSetListener, mYear, mMonth, mDay);
+                datePickerDialog.show();
+                datePickerDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        initData();
+                        initUI();
+                    }
+                });
+
+                DatePicker dp = findDatePicker((ViewGroup) datePickerDialog.getWindow().getDecorView());
+                if (dp != null)
+                    ((ViewGroup) ((ViewGroup) dp.getChildAt(0)).getChildAt(0)).getChildAt(2).setVisibility(View.GONE);
             }
         });
     }
 
-    private void getLocalData() {
-        dataFromDb = SQLiteUtils.getRecords();
+    private void getLocalData(String currentDate) {
+        if (currentDate.equals(""))
+            getDate();
+        dataFromDb = SQLiteUtils.getRecords(currentDate);
+    }
+
+    private DatePicker findDatePicker(ViewGroup group) {
+        if (group != null) {
+            for (int i = 0, j = group.getChildCount(); i < j; i++) {
+                View child = group.getChildAt(i);
+                if (child instanceof DatePicker)
+                    return (DatePicker) child;
+                else if (child instanceof ViewGroup) {
+                    DatePicker result = findDatePicker((ViewGroup) child);
+                    if (result != null)
+                        return result;
+                }
+            }
+        }
+        return null;
     }
 
     private void getTotalMoney() {
@@ -255,12 +240,21 @@ public class MainActivity extends BaseActivity {
         totalMoney = inMoney - outMoney;
     }
 
-    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
+    private void getDate() {
+        Calendar calendar = Calendar.getInstance();
+        mYear = calendar.get(Calendar.YEAR);
+        mMonth = calendar.get(Calendar.MONTH);
+        mDay = calendar.get(Calendar.DAY_OF_MONTH);
+        selectMonth = mYear + "年" + DateUtil.dateDeal(mMonth + 1) + "月";
+    }
+
+    private DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
         @Override
-        public void onClick(View view) {
-            currentMonth = ((TextView) view).getText().toString();
-            initItems();
-            initUI();
+        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+            mYear = i;
+            mMonth = i1;
+            mDay = i2;
+            selectMonth = mYear + "年" + DateUtil.dateDeal(mMonth + 1) + "月";
         }
     };
 }

@@ -101,6 +101,26 @@ public class SQLiteUtils {
         return records;
     }
 
+    public static ArrayList<RecordItems> getRecords(String str) {
+        ArrayList<RecordItems> records = new ArrayList<>();
+        ArrayList<HashMap<String, Object>> dbData;
+        Cursor cursor = recordDb.query(RECORD_TABLE_NAME, null, "sTime LIKE ?", new String[]{str + "%"}, null, null, null);
+        dbData = cursorToArrList(cursor);
+        for (int i = 0; i < dbData.size(); i++) {
+            String id = (String) dbData.get(i).get("_id");
+            String buyClassifyOne = (String) dbData.get(i).get("sBuyClassifyOne");
+            String payClassify = (String) dbData.get(i).get("sPayClassify");
+            double money = Double.parseDouble((String) dbData.get(i).get("rMoney"));
+            String time = (String) dbData.get(i).get("sTime");
+            long currentTime = Long.parseLong((String) dbData.get(i).get("iCurrentTime"));
+            int deleted = Integer.parseInt((String) dbData.get(i).get("iDeleted"));
+            if (deleted != 1) {
+                records.add(new RecordItems(id, buyClassifyOne, payClassify, money, time, currentTime, deleted));
+            }
+        }
+        return records;
+    }
+
     private static boolean isTableExist(SQLiteDatabase db, String tableName) {
         boolean result = false;
         if (tableName == null)

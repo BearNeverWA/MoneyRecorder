@@ -1,41 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="vertical"
-              android:paddingLeft="10dp"
-              android:paddingRight="10dp"
-              android:paddingTop="10dp"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-    android:gravity="center_horizontal">
-    <TextView
-        android:id="@+id/analyse_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <include layout="@layout/title" />
+
     <LinearLayout
         android:id="@+id/analyse_result_contaner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="20dp">
 
-        <lecho.lib.hellocharts.view.PieChartView
-            android:id="@+id/pie_chart"
-            android:layout_width="170dp"
-            android:layout_height="170dp">
-        </lecho.lib.hellocharts.view.PieChartView>
+        <RelativeLayout
+            android:id="@+id/in_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-        <lecho.lib.hellocharts.view.PieChartView
-            android:id="@+id/pie_chart_pay"
-            android:layout_width="170dp"
-            android:layout_height="170dp">
-        </lecho.lib.hellocharts.view.PieChartView>
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/pie_chart_income"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
 
-        <lecho.lib.hellocharts.view.PieChartView
-            android:id="@+id/pie_chart_income"
-            android:layout_width="170dp"
-            android:layout_height="170dp">
-        </lecho.lib.hellocharts.view.PieChartView>
+        <include layout="@layout/limiter_horizontal" />
 
+        <RelativeLayout
+            android:id="@+id/out_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/pie_chart_pay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

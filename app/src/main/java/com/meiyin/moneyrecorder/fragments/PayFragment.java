@@ -25,6 +25,7 @@ import com.meiyin.moneyrecorder.entities.RecordItems;
 import com.meiyin.moneyrecorder.entities.RvItem;
 import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.CommonUtil;
+import com.meiyin.moneyrecorder.utils.DateUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -72,11 +73,11 @@ public class PayFragment extends Fragment {
     }
 
     private void initUI() {
-        tvSelected = (TextView) view.findViewById(R.id.tv_selected);
-        ivSelected = (ImageView) view.findViewById(R.id.iv_selected);
-        dateView = (TextView) view.findViewById(R.id.pay_date_picker);
-        dateView.setText(mYear + "年" + (mMonth + 1) + "月" + mDay + "日");
-        recyclerView = (RecyclerView) view.findViewById(R.id.rv_classify);
+        tvSelected = view.findViewById(R.id.tv_selected);
+        ivSelected = view.findViewById(R.id.iv_selected);
+        dateView = view.findViewById(R.id.pay_date_picker);
+        dateView.setText(mYear + "年" + DateUtil.dateDeal(mMonth + 1) + "月" + DateUtil.dateDeal(mDay) + "日");
+        recyclerView = view.findViewById(R.id.rv_classify);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 5);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new ClassAdapter(rvItemList);
@@ -89,7 +90,7 @@ public class PayFragment extends Fragment {
         });
         recyclerView.setAdapter(adapter);
 
-        payClass = (TextView) view.findViewById(R.id.pay_classify_select);
+        payClass = view.findViewById(R.id.pay_classify_select);
         payClass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -149,7 +150,7 @@ public class PayFragment extends Fragment {
         view.findViewById(R.id.pay_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                moneyET = (EditText) view.findViewById(R.id.pay_money);
+                moneyET = view.findViewById(R.id.pay_money);
                 if (TextUtils.isEmpty(moneyET.getText().toString())) {
                     Toast.makeText(getActivity(), "请输入金额", Toast.LENGTH_SHORT).show();
                     return;
@@ -177,25 +178,7 @@ public class PayFragment extends Fragment {
             mYear = year;
             mMonth = monthOfYear;
             mDay = dayOfMonth;
-            String days;
-            if (mMonth + 1 < 10) {
-                if (mDay < 10) {
-                    days = new StringBuffer().append(mYear).append("年").append("0").
-                            append(mMonth + 1).append("月").append("0").append(mDay).append("日").toString();
-                } else {
-                    days = new StringBuffer().append(mYear).append("年").append("0").
-                            append(mMonth + 1).append("月").append(mDay).append("日").toString();
-                }
-
-            } else {
-                if (mDay < 10) {
-                    days = new StringBuffer().append(mYear).append("年").
-                            append(mMonth + 1).append("月").append("0").append(mDay).append("日").toString();
-                } else {
-                    days = new StringBuffer().append(mYear).append("年").
-                            append(mMonth + 1).append("月").append(mDay).append("日").toString();
-                }
-            }
+            String days = mYear + "年" + DateUtil.dateDeal(mMonth + 1) + "月" + DateUtil.dateDeal(mDay) + "日";
             dateView.setText(days);
         }
     };
