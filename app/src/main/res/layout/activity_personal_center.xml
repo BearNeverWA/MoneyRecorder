@@ -73,6 +73,7 @@
                     android:layout_height="wrap_content"
                     android:text="银行:"/>
                 <EditText
+                    android:id="@+id/bank_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="请填入银行"/>
@@ -86,9 +87,10 @@
                     android:layout_height="wrap_content"
                     android:text="卡号: "/>
                 <EditText
+                    android:id="@+id/card_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="请填入卡号"/>
+                    android:hint="请填入卡号(只需填后四位)"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="300dp"
@@ -97,11 +99,12 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="每月提醒日: "/>
+                    android:text="每月出账日: "/>
                 <EditText
+                    android:id="@+id/bill_day"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="请选择每月提醒日"/>
+                    android:hint="请选择每月出账日"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="300dp"
@@ -112,6 +115,7 @@
                     android:layout_height="wrap_content"
                     android:text="每月还款日: "/>
                 <EditText
+                    android:id="@+id/pay_day"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="请选择每月还款日"/>
