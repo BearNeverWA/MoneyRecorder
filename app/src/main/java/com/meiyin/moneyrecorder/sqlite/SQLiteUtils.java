@@ -57,6 +57,11 @@ public class SQLiteUtils {
         recordDb.execSQL(table_sql);
     }
 
+    private static void clearRecordTable() {
+        String truncate_record_table_sql = "drop table " + RECORD_TABLE_NAME;
+        recordDb.execSQL(truncate_record_table_sql);
+    }
+
     public static void insertRecord(RecordItems record) {//(String buyClassifyOne,String payClassify,  Double money, String time, long currentTime, int deleted) {
         if (recordDb == null) {
             Log.e(TAG, "insertRecord db is null");
@@ -99,6 +104,17 @@ public class SQLiteUtils {
         return records;
     }
 
+    public static void clearAll() {
+        //如果record_table存在,则删除table
+        if (isTableExist(recordDb, RECORD_TABLE_NAME)) {
+            try {
+                clearRecordTable();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private static boolean isTableExist(SQLiteDatabase db, String tableName) {
         boolean result = false;
         if (tableName == null)
@@ -107,7 +123,7 @@ public class SQLiteUtils {
         String sql = "select * from sqlite_master where type ='table' and name ='" + tableName + "'" ;
         cursor = db.rawQuery(sql, null);
         if (cursor.moveToNext()) {
-            int count = cursor.getInt(0);
+            int count = cursor.getCount();
             if (count > 0) {
                 result = true;
             }

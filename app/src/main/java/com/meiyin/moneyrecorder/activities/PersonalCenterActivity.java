@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.meiyin.moneyrecorder.R;
+import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.SharePreferenceKeys;
 import com.meiyin.moneyrecorder.utils.SharePreferenceUtil;
 
@@ -51,7 +52,7 @@ public class PersonalCenterActivity extends Activity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_USER_NAME, "");
                         SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_PASSWORD, "");
-                        Toast.makeText(PersonalCenterActivity.this, "已退出", Toast.LENGTH_SHORT).show();
+                        SQLiteUtils.clearAll();
                         Intent intent = new Intent(PersonalCenterActivity.this, LoginActivity.class);
                         startActivity(intent);
                         if (MainActivity.mActivity != null) {
