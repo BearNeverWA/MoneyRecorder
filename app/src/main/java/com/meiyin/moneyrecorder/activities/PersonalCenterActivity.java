@@ -99,7 +99,7 @@ public class PersonalCenterActivity extends Activity {
 
             String bank_name = item.getBankName();
             String number = item.getCardNumber();
-            credit_warning_msg = "今天是您手中【" + bank_name +"】尾号" + number + "的信用卡的还款日";
+            credit_warning_msg = "今天是您尾号为" + number + "的【" + bank_name + "】信用卡的还款日";
             ((TextView)findViewById(R.id.credit_warning_msg)).setText(credit_warning_msg);
             credit_warning_ll.setVisibility(View.VISIBLE);
         }
