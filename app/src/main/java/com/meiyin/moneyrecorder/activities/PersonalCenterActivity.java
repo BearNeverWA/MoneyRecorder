@@ -16,10 +16,13 @@ import android.widget.Toast;
 import com.meiyin.moneyrecorder.R;
 import com.meiyin.moneyrecorder.entities.CreditItems;
 import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
+import com.meiyin.moneyrecorder.utils.CreditUtil;
 import com.meiyin.moneyrecorder.utils.SharePreferenceKeys;
 import com.meiyin.moneyrecorder.utils.SharePreferenceUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by cootek332 on 18/5/9.
@@ -43,9 +46,10 @@ public class PersonalCenterActivity extends Activity {
     private Button credit_warning_ok;
     private Button credit_warning_cancel;
 
-    private String card_from_receiver;
+    private String msg_from_receiver;
     private ArrayList<CreditItems> creditsItems;
     private String credit_warning_msg = "";
+    private int currentDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,15 +79,18 @@ public class PersonalCenterActivity extends Activity {
         fill_credit_info_ll.setClickable(true);
 
         //来自notification
-        card_from_receiver = getIntent().getStringExtra("card");
-        if ("0".equals(card_from_receiver) || "1".equals(card_from_receiver)) {
-            Integer card = Integer.parseInt(card_from_receiver);
-            if (creditsItems.size() >= card) {
-                String bank_name = creditsItems.get(card).getBankName();
-                String number = creditsItems.get(card).getCardNumber();
-                credit_warning_msg = "今天是您手中【" + bank_name +"】尾号" + number + "的信用卡的还款日";
-                ((TextView)findViewById(R.id.credit_warning_msg)).setText(credit_warning_msg);
-            }
+        msg_from_receiver = getIntent().getStringExtra("msg");
+        if (!TextUtils.isEmpty(msg_from_receiver)) {
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
+            currentDate = Integer.parseInt(dateFormat.format(calendar.getTime()));
+
+            CreditItems item = CreditUtil.getWarningCreditItems(currentDate);
+
+            String bank_name = item.getBankName();
+            String number = item.getCardNumber();
+            credit_warning_msg = "今天是您手中【" + bank_name +"】尾号" + number + "的信用卡的还款日";
+            ((TextView)findViewById(R.id.credit_warning_msg)).setText(credit_warning_msg);
             credit_warning_ll.setVisibility(View.VISIBLE);
         }
     }
@@ -185,8 +192,8 @@ public class PersonalCenterActivity extends Activity {
         add_credit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String record_days = SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_CREDIT_WARNING_DATES);
-                if (record_days.split(" ").length >= 2) {
+//                String record_days = SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_CREDIT_WARNING_DATES);
+                if (creditsItems.size() >= 2) {
                     Toast.makeText(PersonalCenterActivity.this, "暂时只支持两张卡提醒", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -198,9 +205,10 @@ public class PersonalCenterActivity extends Activity {
             @Override
             public void onClick(View view) {
                 credit_warning_ll.setVisibility(View.GONE);
-                if ("0".equals(card_from_receiver)) {
+                int count = CreditUtil.getWarningCount(currentDate);
+                if (count == 0) {
                     SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_1, true);
-                } else if ("1".equals(card_from_receiver)) {
+                } else if (count == 1) {
                     SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_2, true);
                 }
             }
@@ -217,12 +225,6 @@ public class PersonalCenterActivity extends Activity {
     private void recordCredit(String bank, String card_number, int bill_day, int pay_day) {
         CreditItems item = new CreditItems(null, bank, card_number, bill_day, pay_day, 0, 0);
         SQLiteUtils.insertCredit(item);
-        String record_days = SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_CREDIT_WARNING_DATES);
-        if (TextUtils.isEmpty(record_days)) {
-            SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_CREDIT_WARNING_DATES, "" + pay_day);
-        } else {
-            SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_CREDIT_WARNING_DATES, record_days + " " + pay_day);
-        }
     }
 
     private void fetchAndShowCredit() {
@@ -232,8 +234,9 @@ public class PersonalCenterActivity extends Activity {
             CreditItems item = creditsItems.get(i);
             TextView tmp_tv = new TextView(PersonalCenterActivity.this);
             tmp_tv.setText(item.getBankName() + ": " + item.getCardNumber() + ", 出账日期: " + item.getBillDay() + ", 还款日期: " + item.getPayDay());
-            tmp_tv.setTextSize(20);
+            tmp_tv.setTextSize(14);
             credit_ll.addView(tmp_tv);
+            findViewById(R.id.content_seperate_line).setVisibility(View.VISIBLE);
         }
     }
 

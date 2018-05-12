@@ -6,11 +6,15 @@
     <LinearLayout
         android:id="@+id/personal_main_ll"
                   android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
@@ -23,28 +27,38 @@
                 android:layout_height="wrap_content"
                 android:textSize="20dp"/>
         </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#333333"/>
         <LinearLayout
             android:id="@+id/creditcard_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:orientation="vertical">
         </LinearLayout>
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/content_seperate_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
             android:visibility="gone"
-            android:text="暂时只支持绑定两张卡哦~"/>
+            android:layout_marginBottom="20dp"
+            android:background="#333333"/>
         <Button
             android:id="@+id/add_credit_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="添加信用卡提醒"/>
         <TextView
             android:id="@+id/personal_exit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:text="退出"/>
+            android:layout_marginTop="10dp"
+            android:textSize="14dp"
+            android:text="退出账号"/>
     </LinearLayout>
 
     <LinearLayout
