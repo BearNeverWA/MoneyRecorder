@@ -2,6 +2,7 @@ package com.meiyin.moneyrecorder.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -45,8 +47,8 @@ public class PersonalCenterActivity extends Activity {
     private Button cancel_credit_info_btn;
     private Spinner bank_name_sp;
     private EditText card_number_et;
-    private EditText bill_day_et;
-    private EditText pay_day_et;
+    private TextView bill_day_tv;
+    private TextView pay_day_tv;
     private LinearLayout credit_warning_ll;
     private Button credit_warning_ok;
     private Button credit_warning_cancel;
@@ -70,8 +72,8 @@ public class PersonalCenterActivity extends Activity {
         cancel_credit_info_btn = (Button) findViewById(R.id.cancel_credit_info_btn);
         bank_name_sp = (Spinner) findViewById(R.id.bank_name);
         card_number_et = (EditText)findViewById(R.id.card_number);
-        bill_day_et = (EditText)findViewById(R.id.bill_day);
-        pay_day_et = (EditText)findViewById(R.id.pay_day);
+        bill_day_tv = (TextView)findViewById(R.id.bill_day);
+        pay_day_tv = (TextView)findViewById(R.id.pay_day);
         credit_warning_ll = (LinearLayout)findViewById(R.id.credit_warning_ll);
         credit_warning_ok = (Button)findViewById(R.id.credit_warning_ok);
         credit_warning_cancel = (Button)findViewById(R.id.credit_warning_cancel);
@@ -140,8 +142,8 @@ public class PersonalCenterActivity extends Activity {
             public void onClick(View view) {
                 String bank = bank_name_sp.getSelectedItem().toString();
                 String card_number = card_number_et.getText().toString();
-                String bill_day = bill_day_et.getText().toString();
-                String pay_day = pay_day_et.getText().toString();
+                String bill_day = bill_day_tv.getText().toString();
+                String pay_day = pay_day_tv.getText().toString();
                 int bill_day_int = 0;
                 int pay_day_int = 0;
                 if (TextUtils.isEmpty(bank)) {
@@ -150,6 +152,17 @@ public class PersonalCenterActivity extends Activity {
                 }
                 if (TextUtils.isEmpty(card_number)) {
                     Toast.makeText(PersonalCenterActivity.this, "请填入银行卡号", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (card_number.length() != 4) {
+                    Toast.makeText(PersonalCenterActivity.this, "请输入卡号后四位", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                try {
+                    Integer.parseInt(card_number);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(PersonalCenterActivity.this, "请在卡号栏中输入号码", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (TextUtils.isEmpty(bill_day)) {
@@ -187,6 +200,24 @@ public class PersonalCenterActivity extends Activity {
                 recordCredit(bank, card_number, Integer.parseInt(bill_day), Integer.parseInt(pay_day));
                 fetchAndShowCredit();
                 clearTable();
+            }
+        });
+
+        bill_day_tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar ca = Calendar.getInstance();
+                DatePickerDialog datePickerDialog = new DatePickerDialog(PersonalCenterActivity.this, onBillDayDateSetListener, ca.get(Calendar.YEAR), ca.get(Calendar.MONTH), ca.get(Calendar.DATE));
+                datePickerDialog.show();
+            }
+        });
+
+        pay_day_tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar ca = Calendar.getInstance();
+                DatePickerDialog datePickerDialog = new DatePickerDialog(PersonalCenterActivity.this, onPayDayDateSetListener, ca.get(Calendar.YEAR), ca.get(Calendar.MONTH), ca.get(Calendar.DATE));
+                datePickerDialog.show();
             }
         });
 
@@ -248,11 +279,27 @@ public class PersonalCenterActivity extends Activity {
         }
     }
 
+    private DatePickerDialog.OnDateSetListener onBillDayDateSetListener = new DatePickerDialog.OnDateSetListener() {
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            bill_day_tv.setText(dayOfMonth + "");
+        }
+    };
+
+    private DatePickerDialog.OnDateSetListener onPayDayDateSetListener = new DatePickerDialog.OnDateSetListener() {
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            pay_day_tv.setText(dayOfMonth + "");
+        }
+    };
+
     private void clearTable() {
         bank_name_sp.setSelection(0);
         card_number_et.setText("");
-        bill_day_et.setText("");
-        pay_day_et.setText("");
+        bill_day_tv.setText("");
+        pay_day_tv.setText("");
         fill_credit_info_ll.setVisibility(View.GONE);
     }
 }

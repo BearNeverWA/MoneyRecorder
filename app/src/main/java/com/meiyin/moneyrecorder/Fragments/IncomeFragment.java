@@ -80,19 +80,18 @@ public class IncomeFragment extends Fragment {
                 Spinner incomeDestClassify = (Spinner)view.findViewById(R.id.income_dest_spinner);
 
                 EditText moneyET = (EditText)view.findViewById(R.id.income_money);
-                TextView dateTV = (TextView)view.findViewById(R.id.income_date_picker);
                 if (TextUtils.isEmpty(moneyET.getText().toString())) {
                     Toast.makeText(getActivity(), "请输入金额", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (TextUtils.isEmpty(dateTV.getText().toString())) {
+                if (TextUtils.isEmpty(dateView.getText().toString())) {
                     Toast.makeText(getActivity(), "请选择日期", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 SQLiteUtils.insertRecord(new RecordItems(null, incomeClassifyOne.getSelectedItem().toString(),
                         incomeDestClassify.getSelectedItem().toString(),
                         Double.parseDouble(moneyET.getText().toString()),
-                        dateTV.getText().toString(),
+                        dateView.getText().toString(),
                         Calendar.getInstance().getTimeInMillis(), 0));
                 Toast.makeText(getActivity(), "数据保存成功", Toast.LENGTH_SHORT).show();
                 getActivity().finish();
