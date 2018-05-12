@@ -12,10 +12,13 @@ import android.util.Log;
 
 import com.meiyin.moneyrecorder.R;
 import com.meiyin.moneyrecorder.activities.PersonalCenterActivity;
+import com.meiyin.moneyrecorder.entities.CreditItems;
+import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.SharePreferenceKeys;
 import com.meiyin.moneyrecorder.utils.SharePreferenceUtil;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -32,27 +35,24 @@ public class CreditReceiver extends BroadcastReceiver {
         SimpleDateFormat hourFormat = new SimpleDateFormat("HH");
         int currentDate = Integer.parseInt(dateFormat.format(calendar.getTime()));
         int currentHour = Integer.parseInt(hourFormat.format(calendar.getTime()));
-//        Toast.makeText(context, date, Toast.LENGTH_SHORT).show();
-        String setedDate = SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_CREDIT_WARNING_DATES);
+        ArrayList<CreditItems> creditItems = SQLiteUtils.getCredits();
         if (currentDate == 1 && currentHour < 9) {
             SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_1, false);
             SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_2, false);
         }
-        String[] dates = setedDate.split(" ");
-        for (int i = 0; i < dates.length; i++) {
-            if (TextUtils.isEmpty(dates[i])) {
-                continue;
+        for (int i = 0; i < creditItems.size(); i++) {
+            String current_key = SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_1 ;
+            if (i == 1) {
+                current_key = SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_2 ;
             }
-
-            if (i == 0
-                    && Integer.parseInt(dates[0]) == currentDate
-                    && !SharePreferenceUtil.getBooleanRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_1)) {
+            if (creditItems.get(i).getPayDay() == currentDate
+                    && !SharePreferenceUtil.getBooleanRecord(current_key)) {
                 Intent intent1 = new Intent(context, PersonalCenterActivity.class);
                 if (PersonalCenterActivity.mActivity != null) {
                     PersonalCenterActivity.mActivity.finish();
                 }
                 intent1.putExtra("msg", "need show dialog");
-                intent1.putExtra("card", 0);
+                intent1.putExtra("card", i + "");
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent1, 0);
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -64,29 +64,7 @@ public class CreditReceiver extends BroadcastReceiver {
                         .setContentIntent(pendingIntent)
                         .setAutoCancel(true);
                 notificationManager.notify(0, builder.build());
-            } else if (i == 1
-                    && Integer.parseInt(dates[1]) == currentDate
-                    && !SharePreferenceUtil.getBooleanRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_2)) {
-
-                if (PersonalCenterActivity.mActivity != null) {
-                    PersonalCenterActivity.mActivity.finish();
-                }
-                Intent intent1 = new Intent(context, PersonalCenterActivity.class);
-                intent1.putExtra("msg", "need show dialog");
-                intent1.putExtra("card", 1);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent1, 0);
-                NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-                builder.setContentTitle("信用卡还款提醒")
-                        .setContentText("今天是您信用卡的还款日哦")
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setDefaults(Notification.DEFAULT_SOUND)
-                        .setContentIntent(pendingIntent);
-                notificationManager.notify(0, builder.build());
             }
-
         }
-        Log.e(TAG, "date2: " + currentDate);
     }
 }

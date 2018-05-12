@@ -43,7 +43,9 @@ public class PersonalCenterActivity extends Activity {
     private Button credit_warning_ok;
     private Button credit_warning_cancel;
 
-    private int pay_date_from_receiver = -1;
+    private String card_from_receiver;
+    private ArrayList<CreditItems> creditsItems;
+    private String credit_warning_msg = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,15 +66,24 @@ public class PersonalCenterActivity extends Activity {
         credit_warning_ll = (LinearLayout)findViewById(R.id.credit_warning_ll);
         credit_warning_ok = (Button)findViewById(R.id.credit_warning_ok);
         credit_warning_cancel = (Button)findViewById(R.id.credit_warning_cancel);
+        fetchAndShowCredit();
         initUI();
         bindEvents();
-        fetchAndShowCredit();
     }
     private void initUI() {
         account_tv.setText(SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_USER_NAME));
         fill_credit_info_ll.setClickable(true);
-        pay_date_from_receiver = getIntent().getIntExtra("card", -1);
-        if (pay_date_from_receiver == 0 || pay_date_from_receiver ==1) {
+
+        //来自notification
+        card_from_receiver = getIntent().getStringExtra("card");
+        if ("0".equals(card_from_receiver) || "1".equals(card_from_receiver)) {
+            Integer card = Integer.parseInt(card_from_receiver);
+            if (creditsItems.size() >= card) {
+                String bank_name = creditsItems.get(card).getBankName();
+                String number = creditsItems.get(card).getCardNumber();
+                credit_warning_msg = "今天是您手中【" + bank_name +"】尾号" + number + "的信用卡的还款日";
+                ((TextView)findViewById(R.id.credit_warning_msg)).setText(credit_warning_msg);
+            }
             credit_warning_ll.setVisibility(View.VISIBLE);
         }
     }
@@ -187,9 +198,9 @@ public class PersonalCenterActivity extends Activity {
             @Override
             public void onClick(View view) {
                 credit_warning_ll.setVisibility(View.GONE);
-                if (pay_date_from_receiver == 0) {
+                if ("0".equals(card_from_receiver)) {
                     SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_1, true);
-                } else if (pay_date_from_receiver == 1) {
+                } else if ("1".equals(card_from_receiver)) {
                     SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_2, true);
                 }
             }
@@ -216,9 +227,9 @@ public class PersonalCenterActivity extends Activity {
 
     private void fetchAndShowCredit() {
         credit_ll.removeAllViews();
-        ArrayList<CreditItems> items = SQLiteUtils.getCredits();
-        for (int i = 0; i < items.size(); i++) {
-            CreditItems item = items.get(i);
+        creditsItems = SQLiteUtils.getCredits();
+        for (int i = 0; i < creditsItems.size(); i++) {
+            CreditItems item = creditsItems.get(i);
             TextView tmp_tv = new TextView(PersonalCenterActivity.this);
             tmp_tv.setText(item.getBankName() + ": " + item.getCardNumber() + ", 出账日期: " + item.getBillDay() + ", 还款日期: " + item.getPayDay());
             tmp_tv.setTextSize(20);

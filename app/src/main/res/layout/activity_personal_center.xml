@@ -165,13 +165,14 @@
                 android:layout_height="1dp"
                 android:background="#000000"/>
             <TextView
+                android:id="@+id/credit_warning_msg"
                 android:layout_width="match_parent"
                 android:layout_height="140dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:gravity="center"
                 android:textSize="24sp"
-                android:text="今天是您尾号为XXXX的信用卡还款期!"/>
+                android:text=""/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
