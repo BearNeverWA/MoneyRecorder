@@ -1,12 +1,16 @@
 package com.meiyin.moneyrecorder.receivers;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
+import com.meiyin.moneyrecorder.R;
 import com.meiyin.moneyrecorder.activities.PersonalCenterActivity;
 import com.meiyin.moneyrecorder.utils.SharePreferenceKeys;
 import com.meiyin.moneyrecorder.utils.SharePreferenceUtil;
@@ -46,8 +50,16 @@ public class CreditReceiver extends BroadcastReceiver {
                 Intent intent1 = new Intent(context, PersonalCenterActivity.class);
                 intent1.putExtra("msg", "need show dialog");
                 intent1.putExtra("card", 0);
-                intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent1);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent1, 0);
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+                builder.setContentTitle("信用卡还款提醒")
+                        .setContentText("今天是您信用卡的还款日哦")
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setDefaults(Notification.DEFAULT_SOUND)
+                        .setContentIntent(pendingIntent);
+                notificationManager.notify(0, builder.build());
             } else if (i == 1
                     && Integer.parseInt(dates[1]) == currentDate
                     && !SharePreferenceUtil.getBooleanRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_2)) {
@@ -55,8 +67,16 @@ public class CreditReceiver extends BroadcastReceiver {
                 Intent intent1 = new Intent(context, PersonalCenterActivity.class);
                 intent1.putExtra("msg", "need show dialog");
                 intent1.putExtra("card", 1);
-                intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent1);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent1, 0);
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+                builder.setContentTitle("信用卡还款提醒")
+                        .setContentText("今天是您信用卡的还款日哦")
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setDefaults(Notification.DEFAULT_SOUND)
+                        .setContentIntent(pendingIntent);
+                notificationManager.notify(0, builder.build());
             }
 
         }

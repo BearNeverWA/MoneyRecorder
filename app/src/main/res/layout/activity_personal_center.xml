@@ -129,6 +129,7 @@
                     android:id="@+id/confirm_credit_info_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
                     android:text="确定"/>
                 <Button
                     android:id="@+id/cancel_credit_info_btn"
