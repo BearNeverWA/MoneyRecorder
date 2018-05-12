@@ -48,6 +48,9 @@ public class CreditReceiver extends BroadcastReceiver {
                     && Integer.parseInt(dates[0]) == currentDate
                     && !SharePreferenceUtil.getBooleanRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_1)) {
                 Intent intent1 = new Intent(context, PersonalCenterActivity.class);
+                if (PersonalCenterActivity.mActivity != null) {
+                    PersonalCenterActivity.mActivity.finish();
+                }
                 intent1.putExtra("msg", "need show dialog");
                 intent1.putExtra("card", 0);
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent1, 0);
@@ -58,12 +61,16 @@ public class CreditReceiver extends BroadcastReceiver {
                         .setContentText("今天是您信用卡的还款日哦")
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setDefaults(Notification.DEFAULT_SOUND)
-                        .setContentIntent(pendingIntent);
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true);
                 notificationManager.notify(0, builder.build());
             } else if (i == 1
                     && Integer.parseInt(dates[1]) == currentDate
                     && !SharePreferenceUtil.getBooleanRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_2)) {
 
+                if (PersonalCenterActivity.mActivity != null) {
+                    PersonalCenterActivity.mActivity.finish();
+                }
                 Intent intent1 = new Intent(context, PersonalCenterActivity.class);
                 intent1.putExtra("msg", "need show dialog");
                 intent1.putExtra("card", 1);

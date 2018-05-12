@@ -26,6 +26,8 @@ import java.util.ArrayList;
  */
 
 public class PersonalCenterActivity extends Activity {
+    public static Activity mActivity;
+
     private TextView account_tv;
     private TextView exit_tv;
     private LinearLayout credit_ll;
@@ -47,6 +49,7 @@ public class PersonalCenterActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_center);
+        mActivity = this;
         account_tv = (TextView) findViewById(R.id.personal_account);
         exit_tv = (TextView)findViewById(R.id.personal_exit);
         credit_ll = (LinearLayout)findViewById(R.id.creditcard_ll);
