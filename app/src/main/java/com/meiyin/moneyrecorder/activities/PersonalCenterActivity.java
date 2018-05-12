@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +33,9 @@ import java.util.Calendar;
 public class PersonalCenterActivity extends Activity {
     public static Activity mActivity;
 
+
+    private final String[] bank_name_spinner_string = {"中国银行", "招商银行", "农业银行"};
+
     private TextView account_tv;
     private TextView exit_tv;
     private LinearLayout credit_ll;
@@ -38,7 +43,7 @@ public class PersonalCenterActivity extends Activity {
     private LinearLayout fill_credit_info_ll;
     private Button confirm_credit_info_btn;
     private Button cancel_credit_info_btn;
-    private EditText bank_name_et;
+    private Spinner bank_name_sp;
     private EditText card_number_et;
     private EditText bill_day_et;
     private EditText pay_day_et;
@@ -63,7 +68,7 @@ public class PersonalCenterActivity extends Activity {
         fill_credit_info_ll = (LinearLayout)findViewById(R.id.fill_credit_info_ll);
         confirm_credit_info_btn = (Button) findViewById(R.id.confirm_credit_info_btn);
         cancel_credit_info_btn = (Button) findViewById(R.id.cancel_credit_info_btn);
-        bank_name_et = (EditText)findViewById(R.id.bank_name);
+        bank_name_sp = (Spinner) findViewById(R.id.bank_name);
         card_number_et = (EditText)findViewById(R.id.card_number);
         bill_day_et = (EditText)findViewById(R.id.bill_day);
         pay_day_et = (EditText)findViewById(R.id.pay_day);
@@ -75,6 +80,9 @@ public class PersonalCenterActivity extends Activity {
         bindEvents();
     }
     private void initUI() {
+        ArrayAdapter<String> bank_name_adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,bank_name_spinner_string);
+        bank_name_sp.setAdapter(bank_name_adapter);
+
         account_tv.setText(SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_USER_NAME));
         fill_credit_info_ll.setClickable(true);
 
@@ -130,7 +138,7 @@ public class PersonalCenterActivity extends Activity {
         confirm_credit_info_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String bank = bank_name_et.getText().toString();
+                String bank = bank_name_sp.getSelectedItem().toString();
                 String card_number = card_number_et.getText().toString();
                 String bill_day = bill_day_et.getText().toString();
                 String pay_day = pay_day_et.getText().toString();
@@ -241,7 +249,7 @@ public class PersonalCenterActivity extends Activity {
     }
 
     private void clearTable() {
-        bank_name_et.setText("");
+        bank_name_sp.setSelection(0);
         card_number_et.setText("");
         bill_day_et.setText("");
         pay_day_et.setText("");
