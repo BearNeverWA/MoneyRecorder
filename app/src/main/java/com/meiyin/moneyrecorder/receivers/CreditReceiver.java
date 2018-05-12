@@ -45,18 +45,18 @@ public class CreditReceiver extends BroadcastReceiver {
                     && !SharePreferenceUtil.getBooleanRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_1)) {
                 Intent intent1 = new Intent(context, PersonalCenterActivity.class);
                 intent1.putExtra("msg", "need show dialog");
+                intent1.putExtra("card", 0);
                 intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent1);
-                SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_1, true);
             } else if (i == 1
                     && Integer.parseInt(dates[1]) == currentDate
                     && !SharePreferenceUtil.getBooleanRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_2)) {
 
                 Intent intent1 = new Intent(context, PersonalCenterActivity.class);
                 intent1.putExtra("msg", "need show dialog");
+                intent1.putExtra("card", 1);
                 intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent1);
-                SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_2, true);
             }
 
         }

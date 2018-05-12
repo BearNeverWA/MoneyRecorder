@@ -37,6 +37,11 @@ public class PersonalCenterActivity extends Activity {
     private EditText card_number_et;
     private EditText bill_day_et;
     private EditText pay_day_et;
+    private LinearLayout credit_warning_ll;
+    private Button credit_warning_ok;
+    private Button credit_warning_cancel;
+
+    private int pay_date_from_receiver = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,9 @@ public class PersonalCenterActivity extends Activity {
         card_number_et = (EditText)findViewById(R.id.card_number);
         bill_day_et = (EditText)findViewById(R.id.bill_day);
         pay_day_et = (EditText)findViewById(R.id.pay_day);
+        credit_warning_ll = (LinearLayout)findViewById(R.id.credit_warning_ll);
+        credit_warning_ok = (Button)findViewById(R.id.credit_warning_ok);
+        credit_warning_cancel = (Button)findViewById(R.id.credit_warning_cancel);
         initUI();
         bindEvents();
         fetchAndShowCredit();
@@ -60,6 +68,10 @@ public class PersonalCenterActivity extends Activity {
     private void initUI() {
         account_tv.setText(SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_USER_NAME));
         fill_credit_info_ll.setClickable(true);
+        pay_date_from_receiver = getIntent().getIntExtra("card", -1);
+        if (pay_date_from_receiver == 0 || pay_date_from_receiver ==1) {
+            credit_warning_ll.setVisibility(View.VISIBLE);
+        }
     }
 
     private void bindEvents() {
@@ -168,6 +180,24 @@ public class PersonalCenterActivity extends Activity {
             }
         });
 
+        credit_warning_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                credit_warning_ll.setVisibility(View.GONE);
+                if (pay_date_from_receiver == 0) {
+                    SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_1, true);
+                } else if (pay_date_from_receiver == 1) {
+                    SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_WARNED_THIS_MONTH_CARD_2, true);
+                }
+            }
+        });
+
+        credit_warning_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                credit_warning_ll.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void recordCredit(String bank, String card_number, int bill_day, int pay_day) {
