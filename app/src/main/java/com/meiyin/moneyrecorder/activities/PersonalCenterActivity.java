@@ -159,6 +159,11 @@ public class PersonalCenterActivity extends Activity {
         add_credit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String record_days = SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_CREDIT_WARNING_DATES);
+                if (record_days.split(" ").length >= 2) {
+                    Toast.makeText(PersonalCenterActivity.this, "暂时只支持两张卡提醒", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 fill_credit_info_ll.setVisibility(View.VISIBLE);
             }
         });
@@ -168,6 +173,12 @@ public class PersonalCenterActivity extends Activity {
     private void recordCredit(String bank, String card_number, int bill_day, int pay_day) {
         CreditItems item = new CreditItems(null, bank, card_number, bill_day, pay_day, 0, 0);
         SQLiteUtils.insertCredit(item);
+        String record_days = SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_CREDIT_WARNING_DATES);
+        if (TextUtils.isEmpty(record_days)) {
+            SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_CREDIT_WARNING_DATES, "" + pay_day);
+        } else {
+            SharePreferenceUtil.setRecord(SharePreferenceKeys.KEY_CREDIT_WARNING_DATES, record_days + " " + pay_day);
+        }
     }
 
     private void fetchAndShowCredit() {

@@ -22,6 +22,7 @@ public class SharePreferenceUtil {
             editor.commit();
         }
     }
+
     public static String getStringRecord(String key) {
         if (mSharedPreferences != null) {
             return mSharedPreferences.getString(key, "");

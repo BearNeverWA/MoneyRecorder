@@ -1,10 +1,14 @@
 package com.meiyin.moneyrecorder.activities;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +20,7 @@ import android.widget.Toast;
 
 import com.meiyin.moneyrecorder.R;
 import com.meiyin.moneyrecorder.entities.RecordItems;
+import com.meiyin.moneyrecorder.receivers.CreditReceiver;
 import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 
 import java.util.ArrayList;
@@ -44,6 +49,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SQLiteUtils.init();
+        initAlarm();
         initData();
         initUI();
         bindEvents();
@@ -57,6 +63,16 @@ public class MainActivity extends Activity {
         getMonths();
         initItems();
         initUI();
+    }
+
+    private void initAlarm() {
+        AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent("com.meiying.alarm");
+        intent.putExtra("msg", "check credit");
+        PendingIntent sender = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+
+        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
+                        60 * 1000, sender);
     }
 
     private void initData() {
