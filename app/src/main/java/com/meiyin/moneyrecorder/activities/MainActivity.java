@@ -1,7 +1,11 @@
 package com.meiyin.moneyrecorder.activities;
 
+import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -40,13 +44,13 @@ import java.util.Map;
  */
 
 public class MainActivity extends BaseActivity {
-
+    public static Activity mActivity;
     ArrayList<RecordItems> dataFromDb;
     ListAdapter adapter;
     static List<Map<String, Object>> listItems;
     List<Map<String, Object>> reverseList;
 
-    private TextView tvYear, tvMonth, tvIncome, tvPay, tvStatus, tvNumber;
+    private TextView tvYear, tvMonth, tvIncome, tvPay, tvStatus, tvNumber, tvPersonalCenter;
 
     private double inMoney, outMoney, totalMoney;
 
@@ -58,9 +62,11 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SQLiteUtils.init();
+        initAlarm();
         initData();
         initUI();
         bindEvents();
+        mActivity = this;
     }
 
     @Override
@@ -111,15 +117,25 @@ public class MainActivity extends BaseActivity {
         adapter = new ListAdapter(MainActivity.this, R.layout.item_main, reverseList);
     }
 
+    private void initAlarm() {
+        AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent("com.meiying.alarm");
+        intent.putExtra("msg", "check credit");
+        PendingIntent sender = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+
+        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
+                60 * 1000, sender);
+    }
+
     private void initUI() {
         setTitleRight("简单记", "选择月份");
-        tvYear = findViewById(R.id.tv_year);
-        tvMonth = findViewById(R.id.tv_month);
-        tvIncome = findViewById(R.id.tv_income);
-        tvPay = findViewById(R.id.tv_pay);
-        tvStatus = findViewById(R.id.tv_status);
-        tvNumber = findViewById(R.id.tv_number);
-
+        tvYear = (TextView) findViewById(R.id.tv_year);
+        tvMonth = (TextView) findViewById(R.id.tv_month);
+        tvIncome = (TextView) findViewById(R.id.tv_income);
+        tvPay = (TextView) findViewById(R.id.tv_pay);
+        tvStatus = (TextView) findViewById(R.id.tv_status);
+        tvNumber = (TextView) findViewById(R.id.tv_number);
+        tvPersonalCenter = (TextView) findViewById(R.id.tv_personal_center);
         //下划线处理
         tvIncome.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         tvPay.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
@@ -142,7 +158,7 @@ public class MainActivity extends BaseActivity {
             tvNumber.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.red_ff6347));
         }
 
-        ListView content_list = findViewById(R.id.content_list);
+        ListView content_list = (ListView) findViewById(R.id.content_list);
         content_list.setAdapter(adapter);
         content_list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -197,6 +213,13 @@ public class MainActivity extends BaseActivity {
                 DatePicker dp = findDatePicker((ViewGroup) datePickerDialog.getWindow().getDecorView());
                 if (dp != null)
                     ((ViewGroup) ((ViewGroup) dp.getChildAt(0)).getChildAt(0)).getChildAt(2).setVisibility(View.GONE);
+            }
+        });
+        tvPersonalCenter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, PersonalCenterActivity.class);
+                startActivity(intent);
             }
         });
     }

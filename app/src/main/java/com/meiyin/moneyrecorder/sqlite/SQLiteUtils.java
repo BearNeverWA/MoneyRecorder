@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.meiyin.moneyrecorder.entities.CreditItems;
 import com.meiyin.moneyrecorder.entities.RecordItems;
 
 import java.io.File;
@@ -19,6 +20,7 @@ public class SQLiteUtils {
 
     private static SQLiteDatabase recordDb;
     private static final String RECORD_TABLE_NAME = "record_table";
+    private static final String CREDIT_TABLE_NAME = "credit_table";
     private static String TAG = "SQLiteUtils";
 
     //初始化数据库
@@ -41,6 +43,14 @@ public class SQLiteUtils {
                 e.printStackTrace();
             }
         }
+        //如果table不存在,则创建table, 名为"credit_table"
+        if (!isTableExist(recordDb, CREDIT_TABLE_NAME)) {
+            try {
+                createCreditTable();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /*
@@ -56,6 +66,25 @@ public class SQLiteUtils {
         }
         String table_sql = "create table " + RECORD_TABLE_NAME + "(_id integer primary key autoincrement, sBuyClassifyOne text, sPayClassify text, rMoney real, sTime text, iCurrentTime int, iDeleted int, iUploaded int)";
         recordDb.execSQL(table_sql);
+    }
+
+    public static void createCreditTable() {
+        if (recordDb == null) {
+            Log.e(TAG, "createTable db is null");
+            return;
+        }
+        String table_sql = "create table " + CREDIT_TABLE_NAME + "(_id integer primary key autoincrement, sBankName text, sCardNumber text, iBillDay int, iPayDay int, iDeleted int, iUploaded int)";
+        recordDb.execSQL(table_sql);
+    }
+
+    private static void clearRecordTable() {
+        String truncate_record_table_sql = "drop table " + RECORD_TABLE_NAME;
+        recordDb.execSQL(truncate_record_table_sql);
+    }
+
+    private static void clearCreditTable() {
+        String truncate_record_table_sql = "drop table " + CREDIT_TABLE_NAME;
+        recordDb.execSQL(truncate_record_table_sql);
     }
 
     public static void insertRecord(RecordItems record) {
@@ -75,10 +104,31 @@ public class SQLiteUtils {
         recordDb.insert(RECORD_TABLE_NAME, null, cValue);
     }
 
+    public static void insertCredit(CreditItems credit) {
+        if (recordDb == null) {
+            Log.e(TAG, "insertRecord db is null");
+            return;
+        }
+        ContentValues cValue = new ContentValues();
+        cValue.put("sBankName", credit.getBankName());
+        cValue.put("sCardNumber", credit.getCardNumber());
+        cValue.put("iBillDay", credit.getBillDay());
+        cValue.put("iPayDay", credit.getPayDay());
+        cValue.put("iDeleted", credit.getDeleted());
+        cValue.put("iUploaded", 0);
+        recordDb.insert(CREDIT_TABLE_NAME, null, cValue);
+    }
+
     public static void delete(String id) {
         ContentValues cValues = new ContentValues();
         cValues.put("iDeleted", 1);
         recordDb.update(RECORD_TABLE_NAME, cValues, "_id = ?", new String[]{id});
+    }
+
+    public static void deleteCredit(String id) {
+        ContentValues cValues = new ContentValues();
+        cValues.put("iDeleted", 1);
+        recordDb.update(CREDIT_TABLE_NAME, cValues, "_id = ?", new String[] {id});
     }
 
     public static ArrayList<RecordItems> getRecords() {
@@ -119,6 +169,38 @@ public class SQLiteUtils {
             }
         }
         return records;
+    }
+
+    public static ArrayList<CreditItems> getCredits() {
+        ArrayList<CreditItems> credits = new ArrayList<>();
+        ArrayList<HashMap<String, Object>> dbData;
+        Cursor cursor = recordDb.query(CREDIT_TABLE_NAME, null, null, null, null, null, null);
+        dbData = cursorToArrList(cursor);
+        for (int i = 0; i < dbData.size(); i++) {
+            String id = (String)dbData.get(i).get("_id");
+            String bankName = (String)dbData.get(i).get("sBankName");
+            String cardNumber = (String)dbData.get(i).get("sCardNumber");
+            int billDay = Integer.parseInt((String)dbData.get(i).get("iBillDay"));
+            int payDay = Integer.parseInt((String)dbData.get(i).get("iPayDay"));
+            int deleted = Integer.parseInt((String)dbData.get(i).get("iDeleted"));
+            int upload = Integer.parseInt((String)dbData.get(i).get("iUploaded"));
+            if (deleted != 1) {
+                credits.add(new CreditItems(id, bankName, cardNumber, billDay, payDay, deleted, upload));
+            }
+        }
+        return credits;
+    }
+
+    public static void clearAll() {
+        //如果record_table存在,则删除table
+        if (isTableExist(recordDb, RECORD_TABLE_NAME)) {
+            try {
+                clearRecordTable();
+                clearCreditTable();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private static boolean isTableExist(SQLiteDatabase db, String tableName) {

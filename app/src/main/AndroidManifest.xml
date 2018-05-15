@@ -18,6 +18,12 @@
         <activity android:name=".activities.MainActivity"></activity>
         <activity android:name=".activities.RecordActivity"></activity>
         <activity android:name=".activities.AnalyseActivity"></activity>
+        <activity android:name=".activities.PersonalCenterActivity"></activity>
+        <receiver android:name=".receivers.CreditReceiver" >
+            <intent-filter>
+                <action android:name="com.meiying.alarm"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
