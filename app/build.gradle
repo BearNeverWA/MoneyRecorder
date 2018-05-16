@@ -27,6 +27,16 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.1.0'
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:recyclerview-v7:26.1.0'
+
+    //bmob-sdk：Bmob的android sdk包，包含了Bmob的数据存储、文件等服务，以下是最新的bmob-sdk:
+    compile 'cn.bmob.android:bmob-sdk:3.5.5'
+    //bmob-push：Bmob的推送包
+    compile 'cn.bmob.android:bmob-push:0.8'
+    //bmob-im：Bmob的即时通讯包，注意每个版本的im依赖特定版本的bmob-sdk，具体的依赖关系可查看下面注释[2]
+    compile 'cn.bmob.android:bmob-im:2.0.5@aar'
+    compile 'cn.bmob.android:bmob-sdk:3.4.7-aar'
+    //如果你想应用能够兼容Android6.0，请添加此依赖(org.apache.http.legacy.jar)
+    compile 'cn.bmob.android:http-legacy:1.0'
 }
 
 repositories {

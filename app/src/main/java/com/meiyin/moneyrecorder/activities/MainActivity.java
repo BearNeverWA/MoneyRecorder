@@ -28,6 +28,7 @@ import com.meiyin.moneyrecorder.R;
 import com.meiyin.moneyrecorder.adapter.ListAdapter;
 import com.meiyin.moneyrecorder.entities.ListItem;
 import com.meiyin.moneyrecorder.entities.RecordItems;
+import com.meiyin.moneyrecorder.entities.record_table;
 import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.DateUtil;
 
@@ -39,11 +40,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.UpdateListener;
+
 /**
  * Created by cootek332 on 18/4/1.
  */
 
 public class MainActivity extends BaseActivity {
+    private static final String TAG = "MainActivity";
     public static Activity mActivity;
     ArrayList<RecordItems> dataFromDb;
     ListAdapter adapter;
@@ -98,6 +103,7 @@ public class MainActivity extends BaseActivity {
         listItems.clear();
         for (int i = 0; i < dataFromDb.size(); i++) {
             Map<String, Object> listItem = new HashMap<>();
+            listItem.put("objectId", dataFromDb.get(i).getObjectId());
             listItem.put("_id", dataFromDb.get(i).getId());
             listItem.put("buyClassifyOne", dataFromDb.get(i).getBuyClassifyOne());
             listItem.put("payClassify", dataFromDb.get(i).getPayClassify());
@@ -170,6 +176,16 @@ public class MainActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 SQLiteUtils.delete((String) listItems.get(listItems.size() - itemIndex - 1).get("_id"));
+                                String objectId = (String)listItems.get(listItems.size() - itemIndex -1).get("objectId");
+                                record_table record = new record_table();
+                                record.delete(objectId, new UpdateListener() {
+                                    @Override
+                                    public void done(BmobException e) {
+                                        if (e == null) {
+                                            Log.e(TAG, "delete");
+                                        }
+                                    }
+                                });
                                 listItems.remove(listItems.size() - itemIndex - 1);
                                 adapter.notifyDataSetChanged();
                             }

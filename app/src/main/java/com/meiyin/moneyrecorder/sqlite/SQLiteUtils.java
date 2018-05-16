@@ -64,7 +64,7 @@ public class SQLiteUtils {
             Log.e(TAG, "createTable db is null");
             return;
         }
-        String table_sql = "create table " + RECORD_TABLE_NAME + "(_id integer primary key autoincrement, sBuyClassifyOne text, sPayClassify text, rMoney real, sTime text, iCurrentTime int, iDeleted int, iUploaded int)";
+        String table_sql = "create table " + RECORD_TABLE_NAME + "(_id integer primary key autoincrement, sObjectId text, sBuyClassifyOne text, sPayClassify text, rMoney real, sTime text, iCurrentTime int, iDeleted int, iUploaded int)";
         recordDb.execSQL(table_sql);
     }
 
@@ -94,6 +94,7 @@ public class SQLiteUtils {
             return;
         }
         ContentValues cValue = new ContentValues();
+        cValue.put("sObjectId", record.getObjectId());
         cValue.put("sBuyClassifyOne", record.getBuyClassifyOne());
         cValue.put("sPayClassify", record.getPayClassify());
         cValue.put("rMoney", record.getMoney());
@@ -137,6 +138,7 @@ public class SQLiteUtils {
         Cursor cursor = recordDb.query(RECORD_TABLE_NAME, null, null, null, null, null, null);
         dbData = cursorToArrList(cursor);
         for (int i = 0; i < dbData.size(); i++) {
+            String objectId = (String) dbData.get(i).get("sObjectId");
             String id = (String) dbData.get(i).get("_id");
             String buyClassifyOne = (String) dbData.get(i).get("sBuyClassifyOne");
             String payClassify = (String) dbData.get(i).get("sPayClassify");
@@ -145,7 +147,7 @@ public class SQLiteUtils {
             long currentTime = Long.parseLong((String) dbData.get(i).get("iCurrentTime"));
             int deleted = Integer.parseInt((String) dbData.get(i).get("iDeleted"));
             if (deleted != 1) {
-                records.add(new RecordItems(id, buyClassifyOne, payClassify, money, time, currentTime, deleted));
+                records.add(new RecordItems(objectId, id, buyClassifyOne, payClassify, money, time, currentTime, deleted));
             }
         }
         return records;
@@ -157,6 +159,7 @@ public class SQLiteUtils {
         Cursor cursor = recordDb.query(RECORD_TABLE_NAME, null, "sTime LIKE ?", new String[]{str + "%"}, null, null, null);
         dbData = cursorToArrList(cursor);
         for (int i = 0; i < dbData.size(); i++) {
+            String objectId = (String) dbData.get(i).get("sObjectId");
             String id = (String) dbData.get(i).get("_id");
             String buyClassifyOne = (String) dbData.get(i).get("sBuyClassifyOne");
             String payClassify = (String) dbData.get(i).get("sPayClassify");
@@ -165,7 +168,7 @@ public class SQLiteUtils {
             long currentTime = Long.parseLong((String) dbData.get(i).get("iCurrentTime"));
             int deleted = Integer.parseInt((String) dbData.get(i).get("iDeleted"));
             if (deleted != 1) {
-                records.add(new RecordItems(id, buyClassifyOne, payClassify, money, time, currentTime, deleted));
+                records.add(new RecordItems(objectId, id, buyClassifyOne, payClassify, money, time, currentTime, deleted));
             }
         }
         return records;

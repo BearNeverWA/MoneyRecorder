@@ -12,6 +12,8 @@ import com.meiyin.moneyrecorder.R;
 import com.meiyin.moneyrecorder.utils.SharePreferenceKeys;
 import com.meiyin.moneyrecorder.utils.SharePreferenceUtil;
 
+import cn.bmob.v3.Bmob;
+
 public class LoginActivity extends BaseActivity {
     EditText user_name;
     EditText pwd;
@@ -20,6 +22,7 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Bmob.initialize(this, "8326698140972755e828ee4ce47c7754");
         initUI();
         bindEvents();
     }

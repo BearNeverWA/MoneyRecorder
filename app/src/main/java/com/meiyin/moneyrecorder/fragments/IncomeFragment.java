@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.meiyin.moneyrecorder.R;
 import com.meiyin.moneyrecorder.adapter.ClassAdapter;
 import com.meiyin.moneyrecorder.entities.RecordItems;
 import com.meiyin.moneyrecorder.entities.RvItem;
+import com.meiyin.moneyrecorder.entities.record_table;
 import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.CommonUtil;
 import com.meiyin.moneyrecorder.utils.DateUtil;
@@ -33,12 +35,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
+
 /**
  * Created by cootek332 on 18/4/1.
  */
 
 public class IncomeFragment extends Fragment {
-
+    private static final String TAG = "IncomeFragment";
     View view;
     View popupView;
     private PopupWindow popupWindow;
@@ -161,11 +166,34 @@ public class IncomeFragment extends Fragment {
                     Toast.makeText(getActivity(), "请选择日期", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                SQLiteUtils.insertRecord(new RecordItems(null, tvSelected.getText().toString(),
-                        incomeClass.getText().toString(),
-                        Double.parseDouble(moneyET.getText().toString()),
-                        dateView.getText().toString(),
-                        Calendar.getInstance().getTimeInMillis(), 0));
+                final String classify = incomeClass.getText().toString();
+                final record_table record = new record_table();
+                record.setrMoney(Double.parseDouble(moneyET.getText().toString()));
+                record.setiDeleted(0);
+                record.setiUploaded(0);
+                record.setsBuyClassifyOne(classify);
+                record.setiCurrentTime(Calendar.getInstance().getTimeInMillis() + "");
+                record.setsTime(dateView.getText().toString());
+                record.save(new SaveListener<String>() {
+                    @Override
+                    public void done(String objectId, BmobException e) {
+                        if (e == null) {
+                            SQLiteUtils.insertRecord(new RecordItems(objectId, null, tvSelected.getText().toString(),
+                                    classify,
+                                    Double.parseDouble(moneyET.getText().toString()),
+                                    dateView.getText().toString(),
+                                    Calendar.getInstance().getTimeInMillis(), 0));
+//                            Toast toast = Toast.makeText(getActivity(), "sucess,objectid:" + objectId, Toast.LENGTH_SHORT);
+                            Log.e(TAG, record.getsTime() + "," + record.getrMoney());
+//通过show()方法来调用Toast
+//                            toast.show();
+                        } else {
+//                            Toast toast = Toast.makeText(getActivity(), "Fail", Toast.LENGTH_SHORT);
+//通过show()方法来调用Toast
+//                            toast.show();
+                        }
+                    }
+                });
                 Toast.makeText(getActivity(), "数据保存成功", Toast.LENGTH_SHORT).show();
                 getActivity().finish();
             }

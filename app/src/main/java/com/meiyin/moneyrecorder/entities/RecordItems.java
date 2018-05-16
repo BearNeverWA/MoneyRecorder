@@ -5,6 +5,7 @@ package com.meiyin.moneyrecorder.entities;
  */
 
 public class RecordItems {
+    private String objectId;
     private String id;
     private String buyClassifyOne;
     private String payClassify;
@@ -13,7 +14,8 @@ public class RecordItems {
     private long recordTime;
     private int deleted;
 
-    public RecordItems(String id, String buyClassifyOne, String payClassify, double money, String setTime, long recordTime, int deleted) {
+    public RecordItems(String objectId, String id, String buyClassifyOne, String payClassify, double money, String setTime, long recordTime, int deleted) {
+        this.objectId = objectId;
         this.id = id;
         this.buyClassifyOne = buyClassifyOne;
         this.payClassify = payClassify;
@@ -21,6 +23,10 @@ public class RecordItems {
         this.setTime = setTime;
         this.recordTime = recordTime;
         this.deleted = deleted;
+    }
+
+    public String getObjectId() {
+        return objectId;
     }
 
     public String getId() {
