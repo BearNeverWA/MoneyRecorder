@@ -27,6 +27,8 @@ import com.meiyin.moneyrecorder.entities.record_table;
 import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.CommonUtil;
 import com.meiyin.moneyrecorder.utils.DateUtil;
+import com.meiyin.moneyrecorder.utils.SharePreferenceKeys;
+import com.meiyin.moneyrecorder.utils.SharePreferenceUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -167,6 +169,7 @@ public class PayFragment extends Fragment {
                 final String classify = payClass.getText().toString();
                 final record_table record = new record_table();
                 record.setrMoney(Double.parseDouble(moneyET.getText().toString()));
+                record.setsUserName(SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_USER_NAME));
                 record.setiDeleted(0);
                 record.setiUploaded(0);
                 record.setsPayClassify(classify);
@@ -176,6 +179,9 @@ public class PayFragment extends Fragment {
                     @Override
                     public void done(String s, BmobException e) {
                         int uploaded = e == null ? 1 : 0;
+                        if (e != null) {
+                            e.printStackTrace();
+                        }
                         SQLiteUtils.insertRecord(new RecordItems(s, null, tvSelected.getText().toString(),
                                 payClass.getText().toString(),
                                 Double.parseDouble("-" + moneyET.getText().toString()),

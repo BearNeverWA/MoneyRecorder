@@ -6,6 +6,8 @@ import cn.bmob.v3.BmobObject;
 
 public class record_table extends BmobObject {
     private Integer id;
+    private String sUserName;
+    private String sFamilyName;
     private String sBuyClassifyOne;
     private String sPayClassify;
     private Double rMoney;
@@ -18,6 +20,18 @@ public class record_table extends BmobObject {
     }
     public void setId(Integer id){
         this.id=id;
+    }
+    public String getsUserName() {
+        return sUserName;
+    }
+    public void setsUserName(String sUserName) {
+        this.sUserName = sUserName;
+    }
+    public String getsFamilyName() {
+        return sFamilyName;
+    }
+    public void setsFamilyName(String sFamilyName) {
+        this.sFamilyName = sFamilyName;
     }
     public String getsBuyClassifyOne(){
         return sBuyClassifyOne;

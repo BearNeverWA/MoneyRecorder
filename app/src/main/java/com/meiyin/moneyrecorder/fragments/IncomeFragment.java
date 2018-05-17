@@ -30,6 +30,8 @@ import com.meiyin.moneyrecorder.entities.record_table;
 import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.CommonUtil;
 import com.meiyin.moneyrecorder.utils.DateUtil;
+import com.meiyin.moneyrecorder.utils.SharePreferenceKeys;
+import com.meiyin.moneyrecorder.utils.SharePreferenceUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -169,6 +171,7 @@ public class IncomeFragment extends Fragment {
                 final String classify = incomeClass.getText().toString();
                 final record_table record = new record_table();
                 record.setrMoney(Double.parseDouble(moneyET.getText().toString()));
+                record.setsUserName(SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_USER_NAME));
                 record.setiDeleted(0);
                 record.setiUploaded(0);
                 record.setsBuyClassifyOne(classify);
@@ -178,13 +181,14 @@ public class IncomeFragment extends Fragment {
                     @Override
                     public void done(String objectId, BmobException e) {
                         int uploaded = e == null ? 1 : 0;
+                        if (e != null) {
+                            e.printStackTrace();
+                        }
                         SQLiteUtils.insertRecord(new RecordItems(objectId, null, tvSelected.getText().toString(),
                                 classify,
                                 Double.parseDouble(moneyET.getText().toString()),
                                 dateView.getText().toString(),
                                 Calendar.getInstance().getTimeInMillis(), 0, uploaded));
-//                            Toast toast = Toast.makeText(getActivity(), "sucess,objectid:" + objectId, Toast.LENGTH_SHORT);
-                        Log.e(TAG, record.getsTime() + "," + record.getrMoney());
                     }
                 });
                 Toast.makeText(getActivity(), "数据保存成功", Toast.LENGTH_SHORT).show();

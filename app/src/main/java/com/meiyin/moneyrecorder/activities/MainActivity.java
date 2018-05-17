@@ -120,7 +120,7 @@ public class MainActivity extends BaseActivity {
         for (int i = listItems.size() - 1; i >= 0; i--) {
             reverseList.add(listItems.get(i));
         }
-        adapter = new ListAdapter(MainActivity.this, R.layout.item_main, reverseList);
+        adapter = new ListAdapter(MainActivity.this, R.layout.item_main, listItems);
     }
 
     private void initAlarm() {
@@ -175,8 +175,8 @@ public class MainActivity extends BaseActivity {
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                SQLiteUtils.delete((String) listItems.get(listItems.size() - itemIndex - 1).get("_id"));
-                                String objectId = (String)listItems.get(listItems.size() - itemIndex -1).get("objectId");
+                                SQLiteUtils.delete((String) listItems.get(itemIndex).get("_id"));
+                                String objectId = (String)listItems.get(itemIndex).get("objectId");
                                 record_table record = new record_table();
                                 record.delete(objectId, new UpdateListener() {
                                     @Override
@@ -186,7 +186,7 @@ public class MainActivity extends BaseActivity {
                                         }
                                     }
                                 });
-                                listItems.remove(listItems.size() - itemIndex - 1);
+                                listItems.remove(itemIndex);
                                 adapter.notifyDataSetChanged();
                             }
                         })

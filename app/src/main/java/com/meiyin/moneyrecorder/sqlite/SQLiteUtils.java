@@ -64,7 +64,7 @@ public class SQLiteUtils {
             Log.e(TAG, "createTable db is null");
             return;
         }
-        String table_sql = "create table " + RECORD_TABLE_NAME + "(_id integer primary key autoincrement, sUserName text, sFamilyName text, sObjectId text, sBuyClassifyOne text, sPayClassify text, rMoney real, sTime text, iCurrentTime int, iDeleted int, iUploaded int)";
+        String table_sql = "create table " + RECORD_TABLE_NAME + "(_id integer primary key autoincrement, sObjectId text, sBuyClassifyOne text, sPayClassify text, rMoney real, sTime text, iCurrentTime int, iDeleted int, iUploaded int)";
         recordDb.execSQL(table_sql);
     }
 
@@ -73,7 +73,7 @@ public class SQLiteUtils {
             Log.e(TAG, "createTable db is null");
             return;
         }
-        String table_sql = "create table " + CREDIT_TABLE_NAME + "(_id integer primary key autoincrement, sUserName text, sFamilyName text, sBankName text, sCardNumber text, iBillDay int, iPayDay int, iDeleted int, iUploaded int)";
+        String table_sql = "create table " + CREDIT_TABLE_NAME + "(_id integer primary key autoincrement, sBankName text, sCardNumber text, iBillDay int, iPayDay int, iDeleted int, iUploaded int)";
         recordDb.execSQL(table_sql);
     }
 
@@ -93,6 +93,7 @@ public class SQLiteUtils {
             Log.e(TAG, "insertRecord db is null");
             return;
         }
+        Log.e (TAG, "insertRecord: " + record.getObjectId());
         ContentValues cValue = new ContentValues();
         cValue.put("sObjectId", record.getObjectId());
         cValue.put("sBuyClassifyOne", record.getBuyClassifyOne());
