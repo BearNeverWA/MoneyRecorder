@@ -177,21 +177,14 @@ public class IncomeFragment extends Fragment {
                 record.save(new SaveListener<String>() {
                     @Override
                     public void done(String objectId, BmobException e) {
-                        if (e == null) {
-                            SQLiteUtils.insertRecord(new RecordItems(objectId, null, tvSelected.getText().toString(),
-                                    classify,
-                                    Double.parseDouble(moneyET.getText().toString()),
-                                    dateView.getText().toString(),
-                                    Calendar.getInstance().getTimeInMillis(), 0));
+                        int uploaded = e == null ? 1 : 0;
+                        SQLiteUtils.insertRecord(new RecordItems(objectId, null, tvSelected.getText().toString(),
+                                classify,
+                                Double.parseDouble(moneyET.getText().toString()),
+                                dateView.getText().toString(),
+                                Calendar.getInstance().getTimeInMillis(), 0, uploaded));
 //                            Toast toast = Toast.makeText(getActivity(), "sucess,objectid:" + objectId, Toast.LENGTH_SHORT);
-                            Log.e(TAG, record.getsTime() + "," + record.getrMoney());
-//通过show()方法来调用Toast
-//                            toast.show();
-                        } else {
-//                            Toast toast = Toast.makeText(getActivity(), "Fail", Toast.LENGTH_SHORT);
-//通过show()方法来调用Toast
-//                            toast.show();
-                        }
+                        Log.e(TAG, record.getsTime() + "," + record.getrMoney());
                     }
                 });
                 Toast.makeText(getActivity(), "数据保存成功", Toast.LENGTH_SHORT).show();

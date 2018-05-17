@@ -23,6 +23,7 @@ import com.meiyin.moneyrecorder.R;
 import com.meiyin.moneyrecorder.adapter.ClassAdapter;
 import com.meiyin.moneyrecorder.entities.RecordItems;
 import com.meiyin.moneyrecorder.entities.RvItem;
+import com.meiyin.moneyrecorder.entities.record_table;
 import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.CommonUtil;
 import com.meiyin.moneyrecorder.utils.DateUtil;
@@ -30,6 +31,9 @@ import com.meiyin.moneyrecorder.utils.DateUtil;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
 
 
 /**
@@ -159,11 +163,26 @@ public class PayFragment extends Fragment {
                     Toast.makeText(getActivity(), "请选择日期", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                SQLiteUtils.insertRecord(new RecordItems(null, tvSelected.getText().toString(),
-                        payClass.getText().toString(),
-                        Double.parseDouble("-" + moneyET.getText().toString()),
-                        dateView.getText().toString(),
-                        Calendar.getInstance().getTimeInMillis(), 0));
+
+                final String classify = payClass.getText().toString();
+                final record_table record = new record_table();
+                record.setrMoney(Double.parseDouble(moneyET.getText().toString()));
+                record.setiDeleted(0);
+                record.setiUploaded(0);
+                record.setsPayClassify(classify);
+                record.setiCurrentTime(Calendar.getInstance().getTimeInMillis() + "");
+                record.setsTime(dateView.getText().toString());
+                record.save(new SaveListener<String>() {
+                    @Override
+                    public void done(String s, BmobException e) {
+                        int uploaded = e == null ? 1 : 0;
+                        SQLiteUtils.insertRecord(new RecordItems(s, null, tvSelected.getText().toString(),
+                                payClass.getText().toString(),
+                                Double.parseDouble("-" + moneyET.getText().toString()),
+                                dateView.getText().toString(),
+                                Calendar.getInstance().getTimeInMillis(), 0, uploaded));
+                    }
+                });
                 Toast.makeText(getActivity(), "数据保存成功", Toast.LENGTH_SHORT).show();
                 getActivity().finish();
             }

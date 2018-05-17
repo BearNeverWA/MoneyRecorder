@@ -13,8 +13,9 @@ public class RecordItems {
     private String setTime;
     private long recordTime;
     private int deleted;
+    private int uploaded;
 
-    public RecordItems(String objectId, String id, String buyClassifyOne, String payClassify, double money, String setTime, long recordTime, int deleted) {
+    public RecordItems(String objectId, String id, String buyClassifyOne, String payClassify, double money, String setTime, long recordTime, int deleted, int uploaded) {
         this.objectId = objectId;
         this.id = id;
         this.buyClassifyOne = buyClassifyOne;
@@ -23,6 +24,7 @@ public class RecordItems {
         this.setTime = setTime;
         this.recordTime = recordTime;
         this.deleted = deleted;
+        this.uploaded = uploaded;
     }
 
     public String getObjectId() {
@@ -56,5 +58,9 @@ public class RecordItems {
     public int getDeleted() {
         return deleted;
     }
+
+     public int getUploaded() {
+         return  uploaded;
+     }
 
 }

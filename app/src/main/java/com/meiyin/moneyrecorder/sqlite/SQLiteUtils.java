@@ -64,7 +64,7 @@ public class SQLiteUtils {
             Log.e(TAG, "createTable db is null");
             return;
         }
-        String table_sql = "create table " + RECORD_TABLE_NAME + "(_id integer primary key autoincrement, sObjectId text, sBuyClassifyOne text, sPayClassify text, rMoney real, sTime text, iCurrentTime int, iDeleted int, iUploaded int)";
+        String table_sql = "create table " + RECORD_TABLE_NAME + "(_id integer primary key autoincrement, sUserName text, sFamilyName text, sObjectId text, sBuyClassifyOne text, sPayClassify text, rMoney real, sTime text, iCurrentTime int, iDeleted int, iUploaded int)";
         recordDb.execSQL(table_sql);
     }
 
@@ -73,7 +73,7 @@ public class SQLiteUtils {
             Log.e(TAG, "createTable db is null");
             return;
         }
-        String table_sql = "create table " + CREDIT_TABLE_NAME + "(_id integer primary key autoincrement, sBankName text, sCardNumber text, iBillDay int, iPayDay int, iDeleted int, iUploaded int)";
+        String table_sql = "create table " + CREDIT_TABLE_NAME + "(_id integer primary key autoincrement, sUserName text, sFamilyName text, sBankName text, sCardNumber text, iBillDay int, iPayDay int, iDeleted int, iUploaded int)";
         recordDb.execSQL(table_sql);
     }
 
@@ -101,7 +101,7 @@ public class SQLiteUtils {
         cValue.put("sTime", record.getSetTime());
         cValue.put("iCurrentTime", record.getRecordTime());
         cValue.put("iDeleted", record.getDeleted());
-        cValue.put("iUploaded", 0);
+        cValue.put("iUploaded", record.getUploaded());
         recordDb.insert(RECORD_TABLE_NAME, null, cValue);
     }
 
@@ -146,8 +146,9 @@ public class SQLiteUtils {
             String time = (String) dbData.get(i).get("sTime");
             long currentTime = Long.parseLong((String) dbData.get(i).get("iCurrentTime"));
             int deleted = Integer.parseInt((String) dbData.get(i).get("iDeleted"));
+            int uploaded = Integer.parseInt((String) dbData.get(i).get("iUploaded"));
             if (deleted != 1) {
-                records.add(new RecordItems(objectId, id, buyClassifyOne, payClassify, money, time, currentTime, deleted));
+                records.add(new RecordItems(objectId, id, buyClassifyOne, payClassify, money, time, currentTime, deleted, uploaded));
             }
         }
         return records;
@@ -167,8 +168,9 @@ public class SQLiteUtils {
             String time = (String) dbData.get(i).get("sTime");
             long currentTime = Long.parseLong((String) dbData.get(i).get("iCurrentTime"));
             int deleted = Integer.parseInt((String) dbData.get(i).get("iDeleted"));
+            int uploaded = Integer.parseInt((String) dbData.get(i).get("iUploaded"));
             if (deleted != 1) {
-                records.add(new RecordItems(objectId, id, buyClassifyOne, payClassify, money, time, currentTime, deleted));
+                records.add(new RecordItems(objectId, id, buyClassifyOne, payClassify, money, time, currentTime, deleted, uploaded));
             }
         }
         return records;
