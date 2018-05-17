@@ -169,26 +169,32 @@ public class IncomeFragment extends Fragment {
                     return;
                 }
                 final String classify = incomeClass.getText().toString();
+
+                String currentTime = String.valueOf(Calendar.getInstance().getTimeInMillis());
+                SQLiteUtils.insertRecord(new RecordItems(null, null, tvSelected.getText().toString(),
+                        classify,
+                        Double.parseDouble(moneyET.getText().toString()),
+                        dateView.getText().toString(),
+                        currentTime, 0, 0));
+
                 final record_table record = new record_table();
                 record.setrMoney(Double.parseDouble(moneyET.getText().toString()));
                 record.setsUserName(SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_USER_NAME));
                 record.setiDeleted(0);
                 record.setiUploaded(0);
                 record.setsBuyClassifyOne(classify);
-                record.setiCurrentTime(Calendar.getInstance().getTimeInMillis() + "");
+                record.setiCurrentTime(currentTime);
+                Log.e("SQLiteUtils", "currentTime: " + record.getiCurrentTime().toString());
                 record.setsTime(dateView.getText().toString());
                 record.save(new SaveListener<String>() {
                     @Override
                     public void done(String objectId, BmobException e) {
-                        int uploaded = e == null ? 1 : 0;
-                        if (e != null) {
+                        if (e == null) {
+                            SQLiteUtils.uploadRecord(objectId, record.getiCurrentTime().toString());
+                            Log.e("SQLiteUtils", "currentTime: " + record.getiCurrentTime().toString());
+                        } else {
                             e.printStackTrace();
                         }
-                        SQLiteUtils.insertRecord(new RecordItems(objectId, null, tvSelected.getText().toString(),
-                                classify,
-                                Double.parseDouble(moneyET.getText().toString()),
-                                dateView.getText().toString(),
-                                Calendar.getInstance().getTimeInMillis(), 0, uploaded));
                     }
                 });
                 Toast.makeText(getActivity(), "数据保存成功", Toast.LENGTH_SHORT).show();

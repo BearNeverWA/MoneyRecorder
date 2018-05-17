@@ -11,11 +11,11 @@ public class RecordItems {
     private String payClassify;
     private double money;
     private String setTime;
-    private long recordTime;
+    private String recordTime;
     private int deleted;
     private int uploaded;
 
-    public RecordItems(String objectId, String id, String buyClassifyOne, String payClassify, double money, String setTime, long recordTime, int deleted, int uploaded) {
+    public RecordItems(String objectId, String id, String buyClassifyOne, String payClassify, double money, String setTime, String recordTime, int deleted, int uploaded) {
         this.objectId = objectId;
         this.id = id;
         this.buyClassifyOne = buyClassifyOne;
@@ -51,7 +51,7 @@ public class RecordItems {
         return payClassify;
     }
 
-    public long getRecordTime() {
+    public String getRecordTime() {
         return recordTime;
     }
 

@@ -53,7 +53,7 @@ public class MainActivity extends BaseActivity {
     ArrayList<RecordItems> dataFromDb;
     ListAdapter adapter;
     static List<Map<String, Object>> listItems;
-    List<Map<String, Object>> reverseList;
+//    List<Map<String, Object>> reverseList;
 
     private TextView tvYear, tvMonth, tvIncome, tvPay, tvStatus, tvNumber, tvPersonalCenter;
 
@@ -116,10 +116,10 @@ public class MainActivity extends BaseActivity {
             listItem.put("completeTime", dataFromDb.get(i).getSetTime());
             listItems.add(listItem);
         }
-        reverseList = new ArrayList<>();
-        for (int i = listItems.size() - 1; i >= 0; i--) {
-            reverseList.add(listItems.get(i));
-        }
+//        reverseList = new ArrayList<>();
+//        for (int i = listItems.size() - 1; i >= 0; i--) {
+//            reverseList.add(listItems.get(i));
+//        }
         adapter = new ListAdapter(MainActivity.this, R.layout.item_main, listItems);
     }
 
@@ -175,14 +175,17 @@ public class MainActivity extends BaseActivity {
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                SQLiteUtils.delete((String) listItems.get(itemIndex).get("_id"));
-                                String objectId = (String)listItems.get(itemIndex).get("objectId");
+                                String id = (String)listItems.get(itemIndex).get("_id");
+                                String objectId = SQLiteUtils.getObjectIdFromId(id);
+                                SQLiteUtils.deleteRecord(id);
                                 record_table record = new record_table();
                                 record.delete(objectId, new UpdateListener() {
                                     @Override
                                     public void done(BmobException e) {
                                         if (e == null) {
                                             Log.e(TAG, "delete");
+                                        } else {
+                                            e.printStackTrace();
                                         }
                                     }
                                 });

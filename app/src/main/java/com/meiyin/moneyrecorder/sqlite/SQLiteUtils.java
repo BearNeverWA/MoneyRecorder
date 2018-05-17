@@ -64,7 +64,7 @@ public class SQLiteUtils {
             Log.e(TAG, "createTable db is null");
             return;
         }
-        String table_sql = "create table " + RECORD_TABLE_NAME + "(_id integer primary key autoincrement, sObjectId text, sBuyClassifyOne text, sPayClassify text, rMoney real, sTime text, iCurrentTime int, iDeleted int, iUploaded int)";
+        String table_sql = "create table " + RECORD_TABLE_NAME + "(_id integer primary key autoincrement, sObjectId text, sBuyClassifyOne text, sPayClassify text, rMoney real, sTime text, iCurrentTime text, iDeleted int, iUploaded int)";
         recordDb.execSQL(table_sql);
     }
 
@@ -77,13 +77,8 @@ public class SQLiteUtils {
         recordDb.execSQL(table_sql);
     }
 
-    private static void clearRecordTable() {
-        String truncate_record_table_sql = "drop table " + RECORD_TABLE_NAME;
-        recordDb.execSQL(truncate_record_table_sql);
-    }
-
-    private static void clearCreditTable() {
-        String truncate_record_table_sql = "drop table " + CREDIT_TABLE_NAME;
+    private static void dropTable(String table_name) {
+        String truncate_record_table_sql = "drop table " + table_name;
         recordDb.execSQL(truncate_record_table_sql);
     }
 
@@ -121,10 +116,42 @@ public class SQLiteUtils {
         recordDb.insert(CREDIT_TABLE_NAME, null, cValue);
     }
 
-    public static void delete(String id) {
+    public static void deleteRecord(String id) {
         ContentValues cValues = new ContentValues();
         cValues.put("iDeleted", 1);
-        recordDb.update(RECORD_TABLE_NAME, cValues, "_id = ?", new String[]{id});
+        int i = recordDb.update(RECORD_TABLE_NAME, cValues, "_id = ?", new String[]{id});
+        Log.e(TAG, "Delete: " + i);
+    }
+
+    public static String getObjectIdFromId(String id) {
+
+        ArrayList<RecordItems> records = new ArrayList<>();
+        ArrayList<HashMap<String, Object>> dbData;
+        Cursor cursor = recordDb.query(RECORD_TABLE_NAME, null, "_id LIKE ?", new String[]{id + "%"}, null, null, null);
+        dbData = cursorToArrList(cursor);
+        for (int i = 0; i < dbData.size(); i++) {
+            String objectId = (String) dbData.get(i).get("sObjectId");
+            String buyClassifyOne = (String) dbData.get(i).get("sBuyClassifyOne");
+            String payClassify = (String) dbData.get(i).get("sPayClassify");
+            double money = Double.parseDouble((String) dbData.get(i).get("rMoney"));
+            String time = (String) dbData.get(i).get("sTime");
+            String currentTime = (String) dbData.get(i).get("iCurrentTime");
+            int deleted = Integer.parseInt((String) dbData.get(i).get("iDeleted"));
+            int uploaded = Integer.parseInt((String) dbData.get(i).get("iUploaded"));
+            if (deleted != 1) {
+                records.add(new RecordItems(objectId, id, buyClassifyOne, payClassify, money, time, currentTime, deleted, uploaded));
+            }
+        }
+        return records.get(0).getObjectId();
+    }
+
+    public static void uploadRecord(String objectId, String iCurrentTime) {
+        ContentValues cValues = new ContentValues();
+        cValues.put("iUploaded", 1);
+        cValues.put("sObjectId", objectId);
+        int i = recordDb.update(RECORD_TABLE_NAME, cValues, "iCurrentTime = ?", new String[]{iCurrentTime});
+        Log.e(TAG, "i: " + i);
+        Log.e(TAG, "iCurrentTime: " + iCurrentTime);
     }
 
     public static void deleteCredit(String id) {
@@ -145,7 +172,7 @@ public class SQLiteUtils {
             String payClassify = (String) dbData.get(i).get("sPayClassify");
             double money = Double.parseDouble((String) dbData.get(i).get("rMoney"));
             String time = (String) dbData.get(i).get("sTime");
-            long currentTime = Long.parseLong((String) dbData.get(i).get("iCurrentTime"));
+            String currentTime = (String) dbData.get(i).get("iCurrentTime");
             int deleted = Integer.parseInt((String) dbData.get(i).get("iDeleted"));
             int uploaded = Integer.parseInt((String) dbData.get(i).get("iUploaded"));
             if (deleted != 1) {
@@ -167,7 +194,7 @@ public class SQLiteUtils {
             String payClassify = (String) dbData.get(i).get("sPayClassify");
             double money = Double.parseDouble((String) dbData.get(i).get("rMoney"));
             String time = (String) dbData.get(i).get("sTime");
-            long currentTime = Long.parseLong((String) dbData.get(i).get("iCurrentTime"));
+            String currentTime = (String) dbData.get(i).get("iCurrentTime");
             int deleted = Integer.parseInt((String) dbData.get(i).get("iDeleted"));
             int uploaded = Integer.parseInt((String) dbData.get(i).get("iUploaded"));
             if (deleted != 1) {
@@ -201,8 +228,14 @@ public class SQLiteUtils {
         //如果record_table存在,则删除table
         if (isTableExist(recordDb, RECORD_TABLE_NAME)) {
             try {
-                clearRecordTable();
-                clearCreditTable();
+                dropTable(RECORD_TABLE_NAME);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (isTableExist(recordDb, CREDIT_TABLE_NAME)) {
+            try {
+                dropTable(CREDIT_TABLE_NAME);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -217,7 +250,7 @@ public class SQLiteUtils {
         String sql = "select * from sqlite_master where type ='table' and name ='" + tableName + "'";
         cursor = db.rawQuery(sql, null);
         if (cursor.moveToNext()) {
-            int count = cursor.getInt(0);
+            int count = cursor.getCount();
             if (count > 0) {
                 result = true;
             }
