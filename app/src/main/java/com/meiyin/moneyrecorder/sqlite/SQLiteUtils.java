@@ -150,8 +150,12 @@ public class SQLiteUtils {
         cValues.put("iUploaded", 1);
         cValues.put("sObjectId", objectId);
         int i = recordDb.update(RECORD_TABLE_NAME, cValues, "iCurrentTime = ?", new String[]{iCurrentTime});
-        Log.e(TAG, "i: " + i);
-        Log.e(TAG, "iCurrentTime: " + iCurrentTime);
+    }
+
+    public static void uploadRecord(String objectId) {
+        ContentValues cValues = new ContentValues();
+        cValues.put("iUploaded", 1);
+        int i = recordDb.update(RECORD_TABLE_NAME, cValues, "sObjectId = ?", new String[]{objectId});
     }
 
     public static void deleteCredit(String id) {

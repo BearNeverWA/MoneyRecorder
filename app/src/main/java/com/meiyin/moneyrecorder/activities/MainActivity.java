@@ -176,13 +176,14 @@ public class MainActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 String id = (String)listItems.get(itemIndex).get("_id");
-                                String objectId = SQLiteUtils.getObjectIdFromId(id);
+                                final String objectId = SQLiteUtils.getObjectIdFromId(id);
                                 SQLiteUtils.deleteRecord(id);
                                 record_table record = new record_table();
                                 record.delete(objectId, new UpdateListener() {
                                     @Override
                                     public void done(BmobException e) {
                                         if (e == null) {
+                                            SQLiteUtils.uploadRecord(objectId);
                                             Log.e(TAG, "delete");
                                         } else {
                                             e.printStackTrace();
