@@ -23,7 +23,7 @@ import com.meiyin.moneyrecorder.R;
 import com.meiyin.moneyrecorder.adapter.ClassAdapter;
 import com.meiyin.moneyrecorder.entities.RecordItems;
 import com.meiyin.moneyrecorder.entities.RvItem;
-import com.meiyin.moneyrecorder.entities.record_table;
+import com.meiyin.moneyrecorder.http.entities.record_table;
 import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.CommonUtil;
 import com.meiyin.moneyrecorder.utils.DateUtil;
@@ -180,7 +180,8 @@ public class PayFragment extends Fragment {
                 record.setsUserName(SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_USER_NAME));
                 record.setiDeleted(0);
                 record.setiUploaded(0);
-                record.setsPayClassify(classify);
+                record.setsBuyClassifyOne(tvSelected.getText().toString());
+                record.setsPayClassify(payClass.getText().toString());
                 record.setiCurrentTime(iCurrentTime);
                 record.setsTime(dateView.getText().toString());
                 record.save(new SaveListener<String>() {

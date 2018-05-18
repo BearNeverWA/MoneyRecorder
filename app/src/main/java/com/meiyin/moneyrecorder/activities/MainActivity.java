@@ -11,36 +11,33 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.ListView;
-import android.widget.NumberPicker;
-import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.meiyin.moneyrecorder.BaseActivity;
 import com.meiyin.moneyrecorder.R;
 import com.meiyin.moneyrecorder.adapter.ListAdapter;
-import com.meiyin.moneyrecorder.entities.ListItem;
 import com.meiyin.moneyrecorder.entities.RecordItems;
-import com.meiyin.moneyrecorder.entities.record_table;
+import com.meiyin.moneyrecorder.http.entities.record_table;
 import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.DateUtil;
+import com.meiyin.moneyrecorder.utils.SharePreferenceKeys;
+import com.meiyin.moneyrecorder.utils.SharePreferenceUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 
 /**
@@ -72,6 +69,7 @@ public class MainActivity extends BaseActivity {
         initUI();
         bindEvents();
         mActivity = this;
+        uploaded();
     }
 
     @Override
@@ -244,10 +242,52 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    private void uploaded() {
+        ArrayList<RecordItems> records = SQLiteUtils.getUnUploadedRecords();
+        for (RecordItems item : records) {
+
+            final record_table record = new record_table();
+            //删除远端数据
+            if (item.getDeleted() == 1
+                    && !TextUtils.isEmpty(item.getObjectId())) {
+                record.delete(item.getObjectId(), new UpdateListener() {
+                    @Override
+                    public void done(BmobException e) {
+                        if (e != null) {
+                            e.printStackTrace();
+                            return;
+                        }
+                        SQLiteUtils.uploadRecord(record.getObjectId());
+                    }
+                });
+                return;
+            }
+            //上传本地数据
+            record.setsUserName(SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_USER_NAME));
+            record.setsBuyClassifyOne(item.getBuyClassifyOne());
+            record.setsPayClassify(item.getPayClassify());
+            record.setiDeleted(item.getDeleted());
+            record.setId(Integer.parseInt(item.getId()));
+            record.setiCurrentTime(item.getRecordTime());
+            record.setsTime(item.getSetTime());
+            record.setrMoney(item.getMoney());
+            record.save(new SaveListener<String>() {
+                @Override
+                public void done(String objectId, BmobException e) {
+                    if (e != null) {
+                        e.printStackTrace();
+                        return;
+                    }
+                    SQLiteUtils.uploadRecord(objectId, record.getiCurrentTime());
+                }
+            });
+        }
+    }
+
     private void getLocalData(String currentDate) {
         if (currentDate.equals(""))
             getDate();
-        dataFromDb = SQLiteUtils.getRecords(currentDate);
+        dataFromDb = SQLiteUtils.getUnDeletedRecords(currentDate);
     }
 
     private DatePicker findDatePicker(ViewGroup group) {

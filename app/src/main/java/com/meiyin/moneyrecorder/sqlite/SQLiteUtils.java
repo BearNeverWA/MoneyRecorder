@@ -164,7 +164,7 @@ public class SQLiteUtils {
         recordDb.update(CREDIT_TABLE_NAME, cValues, "_id = ?", new String[] {id});
     }
 
-    public static ArrayList<RecordItems> getRecords() {
+    public static ArrayList<RecordItems> getUnDeletedRecords() {
         ArrayList<RecordItems> records = new ArrayList<>();
         ArrayList<HashMap<String, Object>> dbData;
         Cursor cursor = recordDb.query(RECORD_TABLE_NAME, null, null, null, null, null, null);
@@ -186,7 +186,7 @@ public class SQLiteUtils {
         return records;
     }
 
-    public static ArrayList<RecordItems> getRecords(String str) {
+    public static ArrayList<RecordItems> getUnDeletedRecords(String str) {
         ArrayList<RecordItems> records = new ArrayList<>();
         ArrayList<HashMap<String, Object>> dbData;
         Cursor cursor = recordDb.query(RECORD_TABLE_NAME, null, "sTime LIKE ?", new String[]{str + "%"}, null, null, null);
@@ -204,6 +204,26 @@ public class SQLiteUtils {
             if (deleted != 1) {
                 records.add(new RecordItems(objectId, id, buyClassifyOne, payClassify, money, time, currentTime, deleted, uploaded));
             }
+        }
+        return records;
+    }
+
+    public static ArrayList<RecordItems> getUnUploadedRecords() {
+        ArrayList<RecordItems> records = new ArrayList<>();
+        ArrayList<HashMap<String, Object>> dbData;
+        Cursor cursor = recordDb.query(RECORD_TABLE_NAME, null, "iUploaded LIKE ?", new String[]{"0" + "%"}, null, null, null);
+        dbData = cursorToArrList(cursor);
+        for (int i = 0; i < dbData.size(); i++) {
+            String objectId = (String) dbData.get(i).get("sObjectId");
+            String id = (String) dbData.get(i).get("_id");
+            String buyClassifyOne = (String) dbData.get(i).get("sBuyClassifyOne");
+            String payClassify = (String) dbData.get(i).get("sPayClassify");
+            double money = Double.parseDouble((String) dbData.get(i).get("rMoney"));
+            String time = (String) dbData.get(i).get("sTime");
+            String currentTime = (String) dbData.get(i).get("iCurrentTime");
+            int deleted = Integer.parseInt((String) dbData.get(i).get("iDeleted"));
+            int uploaded = Integer.parseInt((String) dbData.get(i).get("iUploaded"));
+            records.add(new RecordItems(objectId, id, buyClassifyOne, payClassify, money, time, currentTime, deleted, uploaded));
         }
         return records;
     }

@@ -13,12 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +24,7 @@ import com.meiyin.moneyrecorder.R;
 import com.meiyin.moneyrecorder.adapter.ClassAdapter;
 import com.meiyin.moneyrecorder.entities.RecordItems;
 import com.meiyin.moneyrecorder.entities.RvItem;
-import com.meiyin.moneyrecorder.entities.record_table;
+import com.meiyin.moneyrecorder.http.entities.record_table;
 import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.CommonUtil;
 import com.meiyin.moneyrecorder.utils.DateUtil;
@@ -182,16 +180,15 @@ public class IncomeFragment extends Fragment {
                 record.setsUserName(SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_USER_NAME));
                 record.setiDeleted(0);
                 record.setiUploaded(0);
-                record.setsBuyClassifyOne(classify);
+                record.setsBuyClassifyOne(tvSelected.getText().toString());
+                record.setsPayClassify(classify);
                 record.setiCurrentTime(currentTime);
-                Log.e("SQLiteUtils", "currentTime: " + record.getiCurrentTime().toString());
                 record.setsTime(dateView.getText().toString());
                 record.save(new SaveListener<String>() {
                     @Override
                     public void done(String objectId, BmobException e) {
                         if (e == null) {
                             SQLiteUtils.uploadRecord(objectId, record.getiCurrentTime().toString());
-                            Log.e("SQLiteUtils", "currentTime: " + record.getiCurrentTime().toString());
                         } else {
                             e.printStackTrace();
                         }

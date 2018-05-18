@@ -1,4 +1,4 @@
-package com.meiyin.moneyrecorder.entities;
+package com.meiyin.moneyrecorder.http.entities;
 import cn.bmob.v3.BmobObject;
 /**
  * Created by jmy on 2018/5/14.

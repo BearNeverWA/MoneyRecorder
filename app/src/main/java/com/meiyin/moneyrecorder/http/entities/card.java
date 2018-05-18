@@ -1,4 +1,4 @@
-package com.meiyin.moneyrecorder.entities;
+package com.meiyin.moneyrecorder.http.entities;
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobDate;
 /**
