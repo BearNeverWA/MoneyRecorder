@@ -164,7 +164,7 @@ public class SQLiteUtils {
         recordDb.update(CREDIT_TABLE_NAME, cValues, "_id = ?", new String[] {id});
     }
 
-    public static ArrayList<RecordItems> getUnDeletedRecords() {
+    public static ArrayList<RecordItems> getAllRecords() {
         ArrayList<RecordItems> records = new ArrayList<>();
         ArrayList<HashMap<String, Object>> dbData;
         Cursor cursor = recordDb.query(RECORD_TABLE_NAME, null, null, null, null, null, null);
@@ -179,9 +179,7 @@ public class SQLiteUtils {
             String currentTime = (String) dbData.get(i).get("iCurrentTime");
             int deleted = Integer.parseInt((String) dbData.get(i).get("iDeleted"));
             int uploaded = Integer.parseInt((String) dbData.get(i).get("iUploaded"));
-            if (deleted != 1) {
-                records.add(new RecordItems(objectId, id, buyClassifyOne, payClassify, money, time, currentTime, deleted, uploaded));
-            }
+            records.add(new RecordItems(objectId, id, buyClassifyOne, payClassify, money, time, currentTime, deleted, uploaded));
         }
         return records;
     }

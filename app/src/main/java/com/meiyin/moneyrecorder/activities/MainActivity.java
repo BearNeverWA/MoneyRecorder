@@ -30,13 +30,19 @@ import com.meiyin.moneyrecorder.utils.DateUtil;
 import com.meiyin.moneyrecorder.utils.SharePreferenceKeys;
 import com.meiyin.moneyrecorder.utils.SharePreferenceUtil;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 
@@ -64,6 +70,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SQLiteUtils.init();
+        getOnlineData();
         initAlarm();
         initData();
         initUI();
@@ -288,6 +295,47 @@ public class MainActivity extends BaseActivity {
         if (currentDate.equals(""))
             getDate();
         dataFromDb = SQLiteUtils.getUnDeletedRecords(currentDate);
+    }
+
+    private void getOnlineData() {
+        ArrayList<RecordItems> itemses = SQLiteUtils.getAllRecords();
+        if (itemses.size() > 0) {
+            return;
+        }
+        BmobQuery<record_table> bmobQuery = new BmobQuery<record_table>("record_table");
+        bmobQuery.addWhereEqualTo("sUserName", SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_USER_NAME));
+        bmobQuery.findObjectsByTable(new QueryListener<JSONArray>() {
+            @Override
+            public void done(JSONArray jsonArray, BmobException e) {
+                if (e != null) {
+                    e.printStackTrace();
+                    return;
+                }
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String iCurrentTime, id, objectId, sBuyClassifyOne, sPayClassify, sTime, sUserName, updatedAt;
+                    int iDeleted, iUploaded;
+                    Double rMoney;
+                    RecordItems items;
+                    try {
+                        JSONObject jsonObject = (JSONObject)jsonArray.get(i);
+                        iCurrentTime = (String)jsonObject.get("iCurrentTime");
+                        iDeleted = (Integer) jsonObject.get("iDeleted");
+                        iUploaded = (Integer)jsonObject.get("iUploaded");
+                        id = jsonObject.get("id") + "";
+                        objectId = (String)jsonObject.get("objectId");
+                        rMoney = Double.parseDouble(jsonObject.get("rMoney") + "");
+                        sBuyClassifyOne = (String)jsonObject.get("sBuyClassifyOne");
+                        sPayClassify = (String)jsonObject.get("sPayClassify");
+                        sTime = (String)jsonObject.get("sTime");
+                        items = new RecordItems(objectId, id, sBuyClassifyOne, sPayClassify, rMoney, sTime, iCurrentTime, iDeleted, iUploaded);
+                        SQLiteUtils.insertRecord(items);
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+                onResume();
+            }
+        });
     }
 
     private DatePicker findDatePicker(ViewGroup group) {
