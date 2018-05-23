@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.meiyin.moneyrecorder.R;
 import com.meiyin.moneyrecorder.entities.CreditItems;
+import com.meiyin.moneyrecorder.http.bmob.BmobConnector;
 import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.CreditUtil;
 import com.meiyin.moneyrecorder.utils.SharePreferenceKeys;
@@ -27,6 +28,9 @@ import com.meiyin.moneyrecorder.utils.SharePreferenceUtil;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
 
 /**
  * Created by cootek332 on 18/5/15.
@@ -77,6 +81,7 @@ public class PersonalCenterActivity extends Activity {
         credit_warning_ll = (LinearLayout)findViewById(R.id.credit_warning_ll);
         credit_warning_ok = (Button)findViewById(R.id.credit_warning_ok);
         credit_warning_cancel = (Button)findViewById(R.id.credit_warning_cancel);
+        getOnlineData();
         fetchAndShowCredit();
         initUI();
         bindEvents();
@@ -198,6 +203,7 @@ public class PersonalCenterActivity extends Activity {
                     return;
                 }
                 recordCredit(bank, card_number, Integer.parseInt(bill_day), Integer.parseInt(pay_day));
+                uploadCredit(bank, card_number, Integer.parseInt(bill_day), Integer.parseInt(pay_day));
                 fetchAndShowCredit();
                 clearTable();
             }
@@ -264,6 +270,26 @@ public class PersonalCenterActivity extends Activity {
     private void recordCredit(String bank, String card_number, int bill_day, int pay_day) {
         CreditItems item = new CreditItems(null, bank, card_number, bill_day, pay_day, 0, 0);
         SQLiteUtils.insertCredit(item);
+    }
+
+    private void uploadCredit(String bank, final String card_number, int bill_day, int pay_day) {
+        String userName = SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_USER_NAME);
+        String familyName = SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_FAMILY_NAME);
+        SaveListener<String> callback = new SaveListener<String>() {
+            @Override
+            public void done(String objectId, BmobException e) {
+                if (e != null) {
+                    e.printStackTrace();
+                    return;
+                }
+                SQLiteUtils.uploadedCredit(objectId, card_number);
+            }
+        };
+        BmobConnector.uploadCredits(userName, familyName, card_number, bank, bill_day, pay_day, callback);
+    }
+
+    private void getOnlineData() {
+        //TODO
     }
 
     private void fetchAndShowCredit() {

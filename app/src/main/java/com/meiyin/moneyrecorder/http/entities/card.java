@@ -9,61 +9,78 @@ public class card extends BmobObject{
     private Integer id;
     private String sBankName;
     private String sCardNumber;
-    private BmobDate iBillDay;
-    private BmobDate iPayDay;
+    private Integer iBillDay;
+    private Integer iPayDay;
     private Integer iDeleted;
     private Integer iUploaded;
-    private String user_name;
-    private String familyname;
+    private String sUserName;
+    private String sFamilyName;
+
     public Integer getId(){
         return id;
     }
-    public String getsBankName(){
+
+    public String getBankName(){
        return sBankName;
     }
-    public void setsBankName(String sBankName){
-        this.sBankName=sBankName;
+
+    public void setBankName(String sBankName){
+        this.sBankName = sBankName;
     }
-    public String getsCardNumber(){
+
+    public String getCardNumber(){
         return sCardNumber;
     }
-    public void setsCardNumber(String sCardNumber){
-        this.sCardNumber=sCardNumber;
+
+    public void setCardNumber(String sCardNumber){
+        this.sCardNumber = sCardNumber;
     }
-    public BmobDate getiBillDay(){
+
+    public Integer getBillDay(){
         return iBillDay;
     }
-    public void setiBillDay(BmobDate iBillDay){
-        this.iBillDay=iBillDay;
+
+    public void setBillDay(Integer iBillDay){
+        this.iBillDay = iBillDay;
     }
-    public BmobDate getiPayDay(){
+
+    public Integer getPayDay(){
         return iPayDay;
     }
-    public void setiPayDay(BmobDate iPayDay){
-        this.iPayDay=iPayDay;
+
+    public void setPayDay(Integer iPayDay){
+        this.iPayDay = iPayDay;
     }
-    public Integer getiDeleted(){
+
+    public Integer getDeleted(){
         return iDeleted;
     }
-    public void setiDeleted(Integer iDeleted){
-        this.iDeleted=iDeleted;
+
+    public void setDeleted(Integer iDeleted){
+        this.iDeleted = iDeleted;
     }
-    public Integer getiUploaded(){
+
+    public Integer getUploaded(){
         return iUploaded;
     }
-    public void setiUploaded(Integer iUploaded){
-        this.iUploaded=iUploaded;
+
+    public void setUploaded(Integer iUploaded){
+        this.iUploaded = iUploaded;
     }
-    public String getUser_name(){
-        return user_name;
+
+    public String getUserName(){
+        return sUserName;
     }
-    public void setUser_name(String user_name){
-        this.user_name=user_name;
+
+    public void setUserName(String sUserName){
+        this.sUserName = sUserName;
     }
+
     public String getFamilyname(){
-        return familyname;
+        return sFamilyName;
     }
-    public void setFamilyname(String familyname){
-        this.familyname=familyname;
+
+    public void setFamilyname(String sFamilyName){
+        this.sFamilyName = sFamilyName;
     }
 }
