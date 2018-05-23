@@ -320,7 +320,7 @@ public class MainActivity extends BaseActivity {
                         JSONObject jsonObject = (JSONObject)jsonArray.get(i);
                         iCurrentTime = (String)jsonObject.get("iCurrentTime");
                         iDeleted = (Integer) jsonObject.get("iDeleted");
-                        iUploaded = (Integer)jsonObject.get("iUploaded");
+                        iUploaded = 1;
                         id = jsonObject.get("id") + "";
                         objectId = (String)jsonObject.get("objectId");
                         rMoney = Double.parseDouble(jsonObject.get("rMoney") + "");
