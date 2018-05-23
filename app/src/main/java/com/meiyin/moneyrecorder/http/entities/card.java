@@ -6,6 +6,14 @@ import cn.bmob.v3.datatype.BmobDate;
  */
 
 public class card extends BmobObject{
+    public static final String FILED_BANK_NAME = "sBankName";
+    public static final String FILED_CARD_NUMBER = "sCardNumber";
+    public static final String FILED_BILL_DAY = "iBillDay";
+    public static final String FILED_PAY_DAY = "iPayDay";
+    public static final String FILED_DELETED = "iDeleted";
+    public static final String FILED_UPLOADED = "iUploaded";
+    public static final String FILED_USER_NAME = "sUserName";
+    public static final String FILED_FAMILY_NAME = "sFamilyName";
     private Integer id;
     private String sBankName;
     private String sCardNumber;

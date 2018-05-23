@@ -73,7 +73,7 @@ public class SQLiteUtils {
             Log.e(TAG, "createTable db is null");
             return;
         }
-        String table_sql = "create table " + CREDIT_TABLE_NAME + "(_id integer primary key autoincrement, sBankName text, sCardNumber text, iBillDay int, iPayDay int, iDeleted int, iUploaded int)";
+        String table_sql = "create table " + CREDIT_TABLE_NAME + "(_id integer primary key autoincrement, sObjectId text, sBankName text, sCardNumber text, iBillDay int, iPayDay int, iDeleted int, iUploaded int)";
         recordDb.execSQL(table_sql);
     }
 
@@ -107,6 +107,7 @@ public class SQLiteUtils {
             return;
         }
         ContentValues cValue = new ContentValues();
+        cValue.put("sObjectId", credit.getObjectId());
         cValue.put("sBankName", credit.getBankName());
         cValue.put("sCardNumber", credit.getCardNumber());
         cValue.put("iBillDay", credit.getBillDay());
@@ -239,6 +240,7 @@ public class SQLiteUtils {
         Cursor cursor = recordDb.query(CREDIT_TABLE_NAME, null, null, null, null, null, null);
         dbData = cursorToArrList(cursor);
         for (int i = 0; i < dbData.size(); i++) {
+            String objectId = (String)dbData.get(i).get("sObjectId");
             String id = (String)dbData.get(i).get("_id");
             String bankName = (String)dbData.get(i).get("sBankName");
             String cardNumber = (String)dbData.get(i).get("sCardNumber");
@@ -247,7 +249,7 @@ public class SQLiteUtils {
             int deleted = Integer.parseInt((String)dbData.get(i).get("iDeleted"));
             int upload = Integer.parseInt((String)dbData.get(i).get("iUploaded"));
             if (deleted != 1) {
-                credits.add(new CreditItems(id, bankName, cardNumber, billDay, payDay, deleted, upload));
+                credits.add(new CreditItems(objectId, id, bankName, cardNumber, billDay, payDay, deleted, upload));
             }
         }
         return credits;
@@ -259,6 +261,7 @@ public class SQLiteUtils {
         Cursor cursor = recordDb.query(CREDIT_TABLE_NAME, null, null, null, null, null, null);
         dbData = cursorToArrList(cursor);
         for (int i = 0; i < dbData.size(); i++) {
+            String objectId = (String)dbData.get(i).get("sObjectId");
             String id = (String)dbData.get(i).get("_id");
             String bankName = (String)dbData.get(i).get("sBankName");
             String cardNumber = (String)dbData.get(i).get("sCardNumber");
@@ -266,7 +269,7 @@ public class SQLiteUtils {
             int payDay = Integer.parseInt((String)dbData.get(i).get("iPayDay"));
             int deleted = Integer.parseInt((String)dbData.get(i).get("iDeleted"));
             int upload = Integer.parseInt((String)dbData.get(i).get("iUploaded"));
-            credits.add(new CreditItems(id, bankName, cardNumber, billDay, payDay, deleted, upload));
+            credits.add(new CreditItems(objectId, id, bankName, cardNumber, billDay, payDay, deleted, upload));
         }
         return credits;
     }

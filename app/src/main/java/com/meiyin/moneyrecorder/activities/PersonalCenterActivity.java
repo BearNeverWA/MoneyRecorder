@@ -19,17 +19,23 @@ import android.widget.Toast;
 
 import com.meiyin.moneyrecorder.R;
 import com.meiyin.moneyrecorder.entities.CreditItems;
-import com.meiyin.moneyrecorder.http.bmob.BmobConnector;
+import com.meiyin.moneyrecorder.http.entities.card;
+import com.meiyin.moneyrecorder.utils.BmobUtils;
 import com.meiyin.moneyrecorder.sqlite.SQLiteUtils;
 import com.meiyin.moneyrecorder.utils.CreditUtil;
 import com.meiyin.moneyrecorder.utils.SharePreferenceKeys;
 import com.meiyin.moneyrecorder.utils.SharePreferenceUtil;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
 
 /**
@@ -86,6 +92,13 @@ public class PersonalCenterActivity extends Activity {
         initUI();
         bindEvents();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchAndShowCredit();
+    }
+
     private void initUI() {
         ArrayAdapter<String> bank_name_adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,bank_name_spinner_string);
         bank_name_sp.setAdapter(bank_name_adapter);
@@ -267,12 +280,12 @@ public class PersonalCenterActivity extends Activity {
         });
     }
 
-    private void recordCredit(String bank, String card_number, int bill_day, int pay_day) {
-        CreditItems item = new CreditItems(null, bank, card_number, bill_day, pay_day, 0, 0);
+    private void recordCredit(String bankName, String cardNumber, int billDay, int payDay) {
+        CreditItems item = new CreditItems(null, null, bankName, cardNumber, billDay, payDay, 0, 0);
         SQLiteUtils.insertCredit(item);
     }
 
-    private void uploadCredit(String bank, final String card_number, int bill_day, int pay_day) {
+    private void uploadCredit(String bankName, final String cardNumber, int billDay, int payDay) {
         String userName = SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_USER_NAME);
         String familyName = SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_FAMILY_NAME);
         SaveListener<String> callback = new SaveListener<String>() {
@@ -282,14 +295,42 @@ public class PersonalCenterActivity extends Activity {
                     e.printStackTrace();
                     return;
                 }
-                SQLiteUtils.uploadedCredit(objectId, card_number);
+                SQLiteUtils.uploadedCredit(objectId, cardNumber);
             }
         };
-        BmobConnector.uploadCredits(userName, familyName, card_number, bank, bill_day, pay_day, callback);
+        BmobUtils.uploadCredits(userName, familyName, cardNumber, bankName, billDay, payDay, callback);
     }
 
     private void getOnlineData() {
-        //TODO
+        if (SQLiteUtils.getAllCredits().size() > 0) {
+            return;
+        }
+        String userName = SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_USER_NAME);
+        QueryListener<JSONArray> callback = new QueryListener<JSONArray>() {
+            @Override
+            public void done(JSONArray jsonArray, BmobException e) {
+                if (e != null) {
+                    e.printStackTrace();
+                    return;
+                }
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    try {
+                        JSONObject obj = (JSONObject)jsonArray.get(i);
+                        String objectId = obj.getString("objectId");
+                        String bankName = obj.getString(card.FILED_BANK_NAME);
+                        String cardNumber = obj.getString(card.FILED_CARD_NUMBER);
+                        int billDay = obj.getInt(card.FILED_BILL_DAY);
+                        int payDay = obj.getInt(card.FILED_PAY_DAY);
+                        CreditItems creditItem = new CreditItems(objectId, null, bankName, cardNumber, billDay, payDay, 0, 1);
+                        SQLiteUtils.insertCredit(creditItem);
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+                onResume();
+            }
+        };
+        BmobUtils.getCredits(userName, callback);
     }
 
     private void fetchAndShowCredit() {

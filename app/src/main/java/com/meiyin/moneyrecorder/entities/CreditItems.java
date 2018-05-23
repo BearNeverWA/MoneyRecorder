@@ -5,6 +5,7 @@ package com.meiyin.moneyrecorder.entities;
  */
 
 public class CreditItems {
+    private String objectId;
     private String id;
     private String bankName;
     private String cardNumber;
@@ -13,7 +14,8 @@ public class CreditItems {
     private int deleted;
     private int uploaded;
 
-    public CreditItems(String id, String bankName, String cardNumber, int billDay, int payDay, int deleted, int uploaded) {
+    public CreditItems(String objectId, String id, String bankName, String cardNumber, int billDay, int payDay, int deleted, int uploaded) {
+        this.objectId = objectId;
         this.id = id;
         this.bankName = bankName;
         this.cardNumber = cardNumber;
@@ -21,6 +23,10 @@ public class CreditItems {
         this.payDay = payDay;
         this.deleted = deleted;
         this.uploaded = uploaded;
+    }
+
+    public String getObjectId() {
+        return objectId;
     }
 
     public String getId() {
