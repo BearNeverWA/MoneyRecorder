@@ -314,6 +314,10 @@ public class PersonalCenterActivity extends Activity {
                     return;
                 }
                 for (int i = 0; i < jsonArray.length(); i++) {
+                    //仅支持显示两张
+                    if (i >= 2) {
+                        break;
+                    }
                     try {
                         JSONObject obj = (JSONObject)jsonArray.get(i);
                         String objectId = obj.getString("objectId");
@@ -341,6 +345,30 @@ public class PersonalCenterActivity extends Activity {
             TextView tmp_tv = new TextView(PersonalCenterActivity.this);
             tmp_tv.setText(item.getBankName() + ": " + item.getCardNumber() + ", 出账日期: " + item.getBillDay() + ", 还款日期: " + item.getPayDay());
             tmp_tv.setTextSize(14);
+            final int finalI = i;
+            tmp_tv.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PersonalCenterActivity.this);
+                    builder.setTitle("确认删除")
+                            .setMessage("是否确认删除该信用卡信息?")
+                            .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    String objectId = creditsItems.get(finalI).getObjectId();
+                                    String id = creditsItems.get(finalI).getId();
+                                    if (!TextUtils.isEmpty(objectId)) {
+                                        BmobUtils.deleteCredits(objectId, id);
+                                    } else {
+                                        SQLiteUtils.deleteCredit(id);
+                                    }
+                                }
+                            })
+                            .setNegativeButton("取消", null)
+                            .create().show();
+                    return false;
+                }
+            });
             credit_ll.addView(tmp_tv);
             findViewById(R.id.content_seperate_line).setVisibility(View.VISIBLE);
         }
