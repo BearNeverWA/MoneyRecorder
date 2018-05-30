@@ -176,7 +176,7 @@ public class PayFragment extends Fragment {
                         iCurrentTime, 0, 0));
 
                 final record_table record = new record_table();
-                record.setrMoney(Double.parseDouble(moneyET.getText().toString()));
+                record.setrMoney(Double.parseDouble("-" + moneyET.getText().toString()));
                 record.setsUserName(SharePreferenceUtil.getStringRecord(SharePreferenceKeys.KEY_USER_NAME));
                 record.setiDeleted(0);
                 record.setiUploaded(0);
