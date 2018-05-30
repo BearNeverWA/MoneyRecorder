@@ -178,7 +178,6 @@ public class AnalyseActivity extends BaseActivity {
         initData();
 
         //income
-        incomeChart.setUsePercentValues(true);
         incomeChart.setDescription("");
         incomeChart.setDrawCenterText(true);
         incomeChart.setCenterText("收入");
@@ -190,7 +189,6 @@ public class AnalyseActivity extends BaseActivity {
         incomeChart.setCenterTextSize(16);
 
         //out
-        payChart.setUsePercentValues(true);
         payChart.setDescription("");
         payChart.setDrawCenterText(true);
         payChart.setCenterText("支出");
