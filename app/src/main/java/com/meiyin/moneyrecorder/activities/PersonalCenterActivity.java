@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -51,10 +52,10 @@ public class PersonalCenterActivity extends Activity {
     private TextView account_tv;
     private TextView exit_tv;
     private LinearLayout credit_ll;
-    private Button add_credit_btn;
+    private TextView add_credit_btn;
     private LinearLayout fill_credit_info_ll;
-    private Button confirm_credit_info_btn;
-    private Button cancel_credit_info_btn;
+    private TextView confirm_credit_info_btn;
+    private TextView cancel_credit_info_btn;
     private Spinner bank_name_sp;
     private EditText card_number_et;
     private TextView bill_day_tv;
@@ -76,10 +77,10 @@ public class PersonalCenterActivity extends Activity {
         account_tv = (TextView) findViewById(R.id.personal_account);
         exit_tv = (TextView)findViewById(R.id.personal_exit);
         credit_ll = (LinearLayout)findViewById(R.id.creditcard_ll);
-        add_credit_btn = (Button)findViewById(R.id.add_credit_btn);
+        add_credit_btn = (TextView)findViewById(R.id.add_credit_btn);
         fill_credit_info_ll = (LinearLayout)findViewById(R.id.fill_credit_info_ll);
-        confirm_credit_info_btn = (Button) findViewById(R.id.confirm_credit_info_btn);
-        cancel_credit_info_btn = (Button) findViewById(R.id.cancel_credit_info_btn);
+        confirm_credit_info_btn = (TextView) findViewById(R.id.confirm_credit_info_btn);
+        cancel_credit_info_btn = (TextView) findViewById(R.id.cancel_credit_info_btn);
         bank_name_sp = (Spinner) findViewById(R.id.bank_name);
         card_number_et = (EditText)findViewById(R.id.card_number);
         bill_day_tv = (TextView)findViewById(R.id.bill_day);
@@ -342,9 +343,11 @@ public class PersonalCenterActivity extends Activity {
         creditsItems = SQLiteUtils.getCredits();
         for (int i = 0; i < creditsItems.size(); i++) {
             CreditItems item = creditsItems.get(i);
-            TextView tmp_tv = new TextView(PersonalCenterActivity.this);
+            final TextView tmp_tv = new TextView(PersonalCenterActivity.this);
+            tmp_tv.setHeight(100);
+            tmp_tv.setGravity(Gravity.CENTER_VERTICAL);
             tmp_tv.setText(item.getBankName() + ": " + item.getCardNumber() + ", 出账日期: " + item.getBillDay() + ", 还款日期: " + item.getPayDay());
-            tmp_tv.setTextSize(14);
+            tmp_tv.setTextSize(16);
             final int finalI = i;
             tmp_tv.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -362,6 +365,8 @@ public class PersonalCenterActivity extends Activity {
                                     } else {
                                         SQLiteUtils.deleteCredit(id);
                                     }
+                                    credit_ll.removeView(tmp_tv);
+                                    creditsItems.remove(finalI);
                                 }
                             })
                             .setNegativeButton("取消", null)

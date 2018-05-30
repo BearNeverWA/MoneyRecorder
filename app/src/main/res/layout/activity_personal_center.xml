@@ -6,35 +6,31 @@
     <LinearLayout
         android:id="@+id/personal_main_ll"
                   android:orientation="vertical"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
+            android:background="@color/colorMain"
             android:orientation="horizontal">
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20dp"
-                android:text="账号: "/>
-            <TextView
                 android:id="@+id/personal_account"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/white"
                 android:textSize="20dp"/>
         </LinearLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#333333"/>
         <LinearLayout
             android:id="@+id/creditcard_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:orientation="vertical">
@@ -45,11 +41,16 @@
             android:layout_height="1dp"
             android:visibility="gone"
             android:layout_marginBottom="20dp"
-            android:background="#333333"/>
-        <Button
+            android:background="#aaaaaa"/>
+        <TextView
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/colorMain"
+            android:textColor="@color/white"
+            android:textSize="16sp"
             android:id="@+id/add_credit_btn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:gravity="center"
             android:text="添加信用卡提醒"/>
         <TextView
@@ -57,6 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
             android:textSize="14dp"
             android:text="退出账号"/>
     </LinearLayout>
@@ -148,18 +150,30 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_horizontal">
-                <Button
+                <TextView
                     android:id="@+id/confirm_credit_info_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
                     android:textSize="14sp"
                     android:layout_marginRight="10dp"
+                    android:background="@color/colorMain"
+                    android:textColor="@color/white"
                     android:text="确定"/>
-                <Button
+                <TextView
                     android:id="@+id/cancel_credit_info_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
                     android:textSize="14sp"
+                    android:background="@color/colorMain"
+                    android:textColor="@color/white"
                     android:text="取消"/>
             </LinearLayout>
         </LinearLayout>
