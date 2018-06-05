@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MoneyRecorder</string>
+    <string name="app_name">简单记</string>
     <string name="user_name">账号:</string>
     <string name="hint_user_name">请输入账号</string>
     <string name="pwd">密码</string>
